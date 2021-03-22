@@ -1,0 +1,12 @@
+Item;Qty;Reference(s);Value;LibPart;Footprint;Farnel order code;Farnel Fabr.;Aantal
+1;1;C1;10nF;Device:C;Capacitor_SMD:C_1206_3216Metric;1414713;C1206C103K5RACTU ;20
+2;1;C2;100uF;Device:C;Capacitor_SMD:C_1206_3216Metric;1907519;GRM31CD80J107ME39L ;20
+3;1;D1;LED;Device:LED;LED_SMD:LED_0402_1005Metric;3131545;5988A10107F ;20
+4;8;D2, D3, D4, D5, D6, D7, D8, D9;D_Small;Device:D_Small;Diode_SMD:D_0402_1005Metric;2317598;NSR05F30NXT5G ;24
+5;2;J1, J2;Conn_01x04_Male;Connector:Conn_01x04_Male;Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical;1022262;M20-9992046 ;30
+6;1;J3;Conn_02x05_Odd_Even;Connector_Generic:Conn_02x05_Odd_Even;Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical;zelfde als hierboven;;
+7;1;J4;Conn_02x04_Odd_Even;Connector_Generic:Conn_02x04_Odd_Even;Connector_PinSocket_2.54mm:PinSocket_2x04_P2.54mm_Vertical;female ?!;Welke moet ik pakken?;
+8;1;R1;1k;Device:R_Small;Diode_SMD:D_0402_1005Metric;2072516;MCMR04X1001FTL ;20
+9;1;U2;ATtiny841-SSU;MCU_Microchip_ATtiny:ATtiny841-SSU;Package_SO:SOIC-14_3.9x8.7mm_P1.27mm;2443189;ATTINY841-SSUR ;20
+;;;Module nRF24L01;;https://opencircuit.nl/Product/nRF24L01-plus-2.4Ghz-draadloze-module;;;10
+;;;Batterij houder;;;3126625;MP000384 ;10
