@@ -27,9 +27,9 @@ protected:
 
 private:
     static tokenprotocol *_instance;
-
 private:
     volatile bool hasClockLineRised;
+    bool hasReceivedSomething;
 
     uint8_t topClockBitNumber;
     char toWrite;
