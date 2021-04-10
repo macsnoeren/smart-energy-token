@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "ELC - Team RED Token Infrastructure"
-Date "2021-03-23"
-Rev "2.0"
+Date "2021-04-09"
+Rev "2.1"
 Comp "Avans Hogeschool"
 Comment1 "Expertise Centrum Technische Innovatie"
 Comment2 "Lectoraat Smart Energy"
@@ -174,174 +174,78 @@ Text Notes 2950 2300 0    50   ~ 0
 Module: nRF24L01
 Text Notes 1500 7400 0    50   ~ 0
 https://npk-stn.ru/2019/07/19/simple_programming_attiny414_via_updi/?lang=en
-$Comp
-L MCU_Microchip_ATtiny:ATtiny202-SS U1
-U 1 1 605A875E
-P 1750 4350
-F 0 "U1" H 1221 4396 50  0000 R CNN
-F 1 "ATtiny202-SS" H 1221 4305 50  0000 R CNN
-F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 1750 4350 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny202-402-AVR-MCU-with-Core-Independent-Peripherals_and-picoPower-40001969A.pdf" H 1750 4350 50  0001 C CNN
-	1    1750 4350
-	1    0    0    -1  
-$EndComp
-Text GLabel 2500 3850 2    50   Input ~ 0
+Text GLabel 3300 5350 2    50   Input ~ 0
 UPDI
-Wire Wire Line
-	2350 4050 2450 4050
-Text GLabel 2550 4000 2    50   Input ~ 0
+Text GLabel 3300 5450 2    50   Input ~ 0
 MOSI
-Text GLabel 3300 4250 2    50   Input ~ 0
+Text GLabel 3300 5550 2    50   Input ~ 0
 MISO
-Text GLabel 2700 4450 2    50   Input ~ 0
+Text GLabel 3300 5650 2    50   Input ~ 0
 SCK
-Text GLabel 2600 4150 2    50   Input ~ 0
+Text GLabel 2500 4250 0    50   Input ~ 0
 DATA_BOTTOM
-Text GLabel 2450 4750 2    50   Input ~ 0
+Text GLabel 3300 5750 2    50   Input ~ 0
 DATA_TOP_CLK
-Text GLabel 2950 4350 2    50   Input ~ 0
+Text GLabel 2500 4150 0    50   Input ~ 0
 DATA_BOTTOM_CLK
-Wire Wire Line
-	2550 4150 2550 4000
-Wire Wire Line
-	2350 4150 2550 4150
-Text GLabel 2550 4600 2    50   Input ~ 0
+Text GLabel 3300 5850 2    50   Input ~ 0
 DATA_TOP
-Wire Wire Line
-	2350 4550 2450 4550
-Wire Wire Line
-	2600 4150 2550 4150
-Connection ~ 2550 4150
-Wire Wire Line
-	2350 4450 2550 4450
-Wire Wire Line
-	2550 4450 2550 4600
-Wire Wire Line
-	2450 4550 2450 4750
-Wire Wire Line
-	2700 4350 2700 4450
-Wire Wire Line
-	2350 4350 2700 4350
-Wire Wire Line
-	2950 4350 2700 4350
-Connection ~ 2700 4350
 $Comp
 L Device:R_Small R2
 U 1 1 605C3635
-P 3250 3950
-F 0 "R2" H 3150 4000 50  0000 C CNN
-F 1 "100k" H 3100 3900 50  0000 C CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder" H 3250 3950 50  0001 C CNN
-F 3 "~" H 3250 3950 50  0001 C CNN
-	1    3250 3950
+P 3200 5050
+F 0 "R2" H 3100 5100 50  0000 C CNN
+F 1 "500k" H 3050 5000 50  0000 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder" H 3200 5050 50  0001 C CNN
+F 3 "~" H 3200 5050 50  0001 C CNN
+	1    3200 5050
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:+3.3V #PWR01
 U 1 1 605C63C4
-P 1750 3650
-F 0 "#PWR01" H 1750 3500 50  0001 C CNN
-F 1 "+3.3V" H 1765 3823 50  0000 C CNN
-F 2 "" H 1750 3650 50  0001 C CNN
-F 3 "" H 1750 3650 50  0001 C CNN
-	1    1750 3650
+P 2450 4900
+F 0 "#PWR01" H 2450 4750 50  0001 C CNN
+F 1 "+3.3V" H 2465 5073 50  0000 C CNN
+F 2 "" H 2450 4900 50  0001 C CNN
+F 3 "" H 2450 4900 50  0001 C CNN
+	1    2450 4900
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	1750 3650 1750 3700
-$Comp
-L power:GND #PWR02
-U 1 1 605C885B
-P 1750 5050
-F 0 "#PWR02" H 1750 4800 50  0001 C CNN
-F 1 "GND" H 1755 4877 50  0000 C CNN
-F 2 "" H 1750 5050 50  0001 C CNN
-F 3 "" H 1750 5050 50  0001 C CNN
-	1    1750 5050
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1750 4950 1750 5000
-Wire Wire Line
-	3250 3850 3250 3700
-Wire Wire Line
-	3250 3700 1750 3700
-Connection ~ 1750 3700
-Wire Wire Line
-	1750 3700 1750 3750
-Wire Wire Line
-	2350 4250 3250 4250
-Wire Wire Line
-	3250 4050 3250 4250
-Connection ~ 3250 4250
-Wire Wire Line
-	3250 4250 3300 4250
-Text Notes 3300 3800 0    50   ~ 0
-Resistor placed\nfor token not\nbuilding
-Text Notes 3700 4200 0    50   ~ 0
+Text Notes 3100 4700 0    50   ~ 0
+Pull-up resister for low current\nand detection top token pulled off.
+Text Notes 1750 4050 0    50   ~ 0
 Building uses MOSI, MISO and SCK for RF.
-Text Notes 3700 4300 0    50   ~ 0
+Text Notes 1750 3950 0    50   ~ 0
 Token uses MOSI and SCK to communicatie to bottom (building or token).
 $Comp
 L Device:R_Small R1
 U 1 1 605D300C
-P 2550 3500
-F 0 "R1" V 2354 3500 50  0000 C CNN
-F 1 "220" V 2445 3500 50  0000 C CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder" H 2550 3500 50  0001 C CNN
-F 3 "~" H 2550 3500 50  0001 C CNN
-	1    2550 3500
-	0    1    1    0   
+P 4200 6050
+F 0 "R1" V 4004 6050 50  0000 C CNN
+F 1 "220" V 4095 6050 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" H 4200 6050 50  0001 C CNN
+F 3 "~" H 4200 6050 50  0001 C CNN
+	1    4200 6050
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Device:LED D1
 U 1 1 605D332F
-P 2850 3500
-F 0 "D1" H 2843 3245 50  0000 C CNN
-F 1 "LED" H 2843 3336 50  0000 C CNN
-F 2 "Inductor_SMD:L_1206_3216Metric_Pad1.22x1.90mm_HandSolder" H 2850 3500 50  0001 C CNN
-F 3 "~" H 2850 3500 50  0001 C CNN
-	1    2850 3500
-	-1   0    0    1   
-$EndComp
-$Comp
-L power:GND #PWR011
-U 1 1 605D41CE
-P 3000 3550
-F 0 "#PWR011" H 3000 3300 50  0001 C CNN
-F 1 "GND" H 3100 3550 50  0000 C CNN
-F 2 "" H 3000 3550 50  0001 C CNN
-F 3 "" H 3000 3550 50  0001 C CNN
-	1    3000 3550
+P 3900 6050
+F 0 "D1" H 3893 5795 50  0000 C CNN
+F 1 "LED" H 3893 5886 50  0000 C CNN
+F 2 "Inductor_SMD:L_1206_3216Metric_Pad1.22x1.90mm_HandSolder" H 3900 6050 50  0001 C CNN
+F 3 "~" H 3900 6050 50  0001 C CNN
+	1    3900 6050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3000 3500 3000 3550
-Wire Wire Line
-	2700 3500 2650 3500
-Wire Wire Line
-	2450 4050 2450 3850
-Wire Wire Line
-	2500 3850 2450 3850
-Connection ~ 2450 3850
-Wire Wire Line
-	2450 3850 2450 3750
+	4050 6050 4100 6050
 Text Notes 2000 2150 0    50   ~ 0
 https://lastminuteengineers.com/nrf24l01-arduino-wireless-communication/
-Text GLabel 2500 3750 2    50   Input ~ 0
+Text GLabel 1700 5650 0    50   Input ~ 0
 CE
-Wire Wire Line
-	2500 3750 2450 3750
-Connection ~ 2450 3750
-Wire Wire Line
-	2450 3750 2450 3500
-Text GLabel 1650 5000 0    50   Input ~ 0
-CSN
-Wire Wire Line
-	1650 5000 1750 5000
-Connection ~ 1750 5000
-Wire Wire Line
-	1750 5000 1750 5050
 Text GLabel 6400 3200 2    50   Input ~ 0
 DATA_TOP
 Text GLabel 6400 3100 2    50   Input ~ 0
@@ -365,4 +269,113 @@ Text GLabel 3550 2550 2    50   Input ~ 0
 MISO
 Text GLabel 3550 2650 2    50   Input ~ 0
 SCK
+Text GLabel 1700 5550 0    50   Input ~ 0
+CSN
+$Comp
+L power:GND #PWR02
+U 1 1 60706721
+P 2450 6600
+F 0 "#PWR02" H 2450 6350 50  0001 C CNN
+F 1 "GND" H 2455 6427 50  0000 C CNN
+F 2 "" H 2450 6600 50  0001 C CNN
+F 3 "" H 2450 6600 50  0001 C CNN
+	1    2450 6600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2450 5050 2450 4900
+Connection ~ 2450 4900
+Wire Wire Line
+	3050 5450 3300 5450
+Wire Wire Line
+	3050 5550 3300 5550
+Wire Wire Line
+	3050 5650 3300 5650
+Wire Wire Line
+	4300 4900 3200 4900
+Wire Notes Line
+	3250 4750 3100 4750
+Wire Notes Line
+	3100 4750 3100 5100
+Wire Wire Line
+	2450 6450 2450 6600
+Text GLabel 2600 4150 2    50   Input ~ 0
+SCK
+Text GLabel 2600 4250 2    50   Input ~ 0
+MOSI
+Wire Wire Line
+	2500 4150 2600 4150
+Wire Wire Line
+	2600 4250 2500 4250
+Wire Wire Line
+	4300 4900 4300 6050
+Wire Wire Line
+	3750 6050 3050 6050
+Text GLabel 1700 5450 0    50   Input ~ 0
+IRQ
+Wire Wire Line
+	3200 4950 3200 4900
+Connection ~ 3200 4900
+Wire Wire Line
+	3200 4900 2450 4900
+Wire Wire Line
+	3200 5150 3200 5850
+Wire Wire Line
+	3200 5850 3050 5850
+Wire Wire Line
+	3300 5750 3050 5750
+Wire Wire Line
+	3300 5850 3200 5850
+Connection ~ 3200 5850
+Wire Wire Line
+	1700 5450 1850 5450
+Wire Wire Line
+	1700 5650 1850 5650
+NoConn ~ 1850 5350
+NoConn ~ 3050 5950
+$Comp
+L Connector:Conn_01x02_Male J1
+U 1 1 60740CD7
+P 6050 4200
+F 0 "J1" H 6158 4381 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 6158 4290 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6050 4200 50  0001 C CNN
+F 3 "~" H 6050 4200 50  0001 C CNN
+	1    6050 4200
+	1    0    0    -1  
+$EndComp
+Text Notes 5850 4450 1    50   ~ 0
+Programming
+Wire Wire Line
+	3050 5350 3300 5350
+$Comp
+L MCU_Microchip_ATtiny:ATtiny1604-SS U1
+U 1 1 60700A84
+P 2450 5750
+F 0 "U1" H 2150 6450 50  0000 C CNN
+F 1 "ATtiny1604-SS" H 2800 6450 50  0000 C CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 2450 5750 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny804_1604-Data-Sheet-40002028A.pdf" H 2450 5750 50  0001 C CNN
+	1    2450 5750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1850 5550 1700 5550
+Text GLabel 6350 4200 2    50   Input ~ 0
+UPDI
+$Comp
+L power:GND #PWR03
+U 1 1 607420F5
+P 6350 4300
+F 0 "#PWR03" H 6350 4050 50  0001 C CNN
+F 1 "GND" H 6355 4127 50  0000 C CNN
+F 2 "" H 6350 4300 50  0001 C CNN
+F 3 "" H 6350 4300 50  0001 C CNN
+	1    6350 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 4300 6250 4300
+Wire Wire Line
+	6250 4200 6350 4200
 $EndSCHEMATC
