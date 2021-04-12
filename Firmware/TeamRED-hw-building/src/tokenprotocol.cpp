@@ -5,53 +5,53 @@
 #define SET_BIT(where, bit_number) ((where) |= 1 << (bit_number))
 #define RESET_BIT(where, bit_number) ((where) &= ~(1 << (bit_number)))
 
-extern bool hasReceivedTopDataFalling;
-extern bool hasReceivedTopDataRising;
-extern bool hasReceivedTopClockRising;
-extern bool hasReceivedTopClockFalling;
+// extern bool hasReceivedTopDataFalling;
+// extern bool hasReceivedTopDataRising;
+// extern bool hasReceivedTopClockRising;
+// extern bool hasReceivedTopClockFalling;
 
-bool prevTopData = true;
-bool prevTopClock = true;
+// bool prevTopData = true;
+// bool prevTopClock = true;
 
 tokenprotocol *tokenprotocol::_instance = 0;
 
-ISR(PCINT0_vect)
-{
+// ISR(PCINT0_vect)
+// {
 
-    bool isPA7 = (PINA >> PINA7) & 1;
-    if (isPA7 && !prevTopClock)
-    {
-        hasReceivedTopClockRising = true;
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->receivedTopClockRising();
-    }
-    else if (!isPA7 && prevTopClock)
-    {
-        hasReceivedTopClockFalling = true;
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->receivedTopClockFalling();
-    }
-    prevTopClock = isPA7;
-}
+//     bool isPA7 = (PINA >> PINA7) & 1;
+//     if (isPA7 && !prevTopClock)
+//     {
+//         //hasReceivedTopClockRising = true;
+//         tokenprotocol *protocol = tokenprotocol::instance();
+//         protocol->receivedTopClockRising();
+//     }
+//     else if (!isPA7 && prevTopClock)
+//     {
+//         //hasReceivedTopClockFalling = true;
+//         tokenprotocol *protocol = tokenprotocol::instance();
+//         protocol->receivedTopClockFalling();
+//     }
+//     prevTopClock = isPA7;
+// }
 
-ISR(PCINT1_vect)
-{
+// ISR(PCINT1_vect)
+// {
 
-    bool isPB2 = (PINB >> PINB2) & 1;
-    if (prevTopData && !isPB2) //detect topdata falling
-    {
-        hasReceivedTopDataFalling = true;
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->receivedTopDataFalling();
-    }
-    else if (!prevTopData && isPB2) // detect topdata rising
-    {
-        hasReceivedTopDataRising = true;
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->receivedTopDataRising();
-    }
-    prevTopData = isPB2;
-}
+//     bool isPB2 = (PINB >> PINB2) & 1;
+//     if (prevTopData && !isPB2) //detect topdata falling
+//     {
+//         //hasReceivedTopDataFalling = true;
+//         tokenprotocol *protocol = tokenprotocol::instance();
+//         protocol->receivedTopDataFalling();
+//     }
+//     else if (!prevTopData && isPB2) // detect topdata rising
+//     {
+//         //hasReceivedTopDataRising = true;
+//         tokenprotocol *protocol = tokenprotocol::instance();
+//         protocol->receivedTopDataRising();
+//     }
+//     prevTopData = isPB2;
+// }
 
 void tokenprotocol::send(const char *text)
 {
