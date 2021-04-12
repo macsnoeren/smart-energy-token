@@ -1,0 +1,108 @@
+
+#include <Arduino.h>
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+#define CE_PIN 3
+#define CSN_PIN 0
+
+bool isBuilding = true;
+bool isReceiver = false;
+
+RF24 radio(CE_PIN, CSN_PIN);
+
+const byte address[6] = "buil1";
+
+#define topDataPin PB2;
+#define topClockPin PA7;
+#define bottomDatPin PA4;
+#define bottomClockPin PA5;
+
+#define tokenProtocolDelay 10
+
+void send_out(bool top, char *text)
+{
+  uint8_t dataPin = 0;
+  uint8_t clockPin = 0;
+  if (top)
+  {
+    dataPin = topDataPin;
+    clockPin = topClockPin;
+  }
+  else
+  {
+    dataPin = bottomDatPin;
+    clockPin = bottomClockPin;
+  }
+
+  digitalWrite(dataPin, HIGH);
+  digitalWrite(clockPin, HIGH);
+  delay(tokenProtocolDelay);
+
+  digitalWrite(dataPin, LOW);
+  delay(tokenProtocolDelay);
+  digitalWrite(clockPin, LOW);
+
+  for (uint8_t i = 0; i < strlen(text); i++)
+  {
+    char character = text[i];
+    for (uint8_t j = 0; i < 8; i++)
+    {
+      digitalWrite(dataPin, !!(character & (1 << (7 - i))));
+      delay(1);
+      digitalWrite(clockPin, 0);
+      delay(tokenProtocolDelay);
+      digitalWrite(clockPin, 1);
+      delay(tokenProtocolDelay);
+    }
+  }
+
+  digitalWrite(dataPin, 0); // to enable stop bit
+  delay(100);               // wait fro aknowledgement
+}
+
+String text = "";
+char toWrite;
+uint8_t topClockBitNumber = 0;
+bool topClockRising = false;
+void receivedTopClockRising()
+{
+  
+  if (topClockBitNumber < 8)
+  {
+    toWrite << 1;
+    bool bit = digitalRead(PB2);
+    toWrite ^= (-bit ^ toWrite) & (1UL << topClockBitNumber); //https://stackoverflow.com/a/47990
+    topClockBitNumber++;
+  }
+  else
+  {
+    topClockBitNumber = 0;
+    toWrite = 0;
+    text += toWrite;
+  }
+}
+
+void receivedTopDataFalling()
+{
+  detachInterrupt(digitalPinToInterrupt(PA7)); // clock
+  detachInterrupt(digitalPinToInterrupt(PB2)); // data
+  attachInterrupt(digitalPinToInterrupt(PA7),receivedTopClockRising,RISING);
+}
+
+
+void setup()
+{
+  pinMode(PA4, OUTPUT);
+  pinMode(PA5, OUTPUT);
+  digitalWrite(PB2,HIGH);                                               
+  attachInterrupt(digitalPinToInterrupt(PB2), receivedTopDataFalling, FALLING);  //set falling interupt for top data pin
+  //radio.begin(); // Start up the radio
+  //isBuilding = radio.isChipConnected();
+
+  pinMode(PA7, OUTPUT);
+}
+void loop()
+{
+}
