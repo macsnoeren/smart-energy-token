@@ -138,7 +138,7 @@ void ReceivingState::on_event(Event e)
 
     case EventName::ReceivedTopDataRisingInterrupt:
         hasStarted = true;
-        if (hasClockLineRised)
+        if (hasClockLineRised && topClockBitNumber == 0)
         {
             Event e{
                 EventName::SendData,

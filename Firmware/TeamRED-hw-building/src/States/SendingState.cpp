@@ -68,37 +68,21 @@ void SendingState::on_execute()
     }
     else
     {
-        if (toSend[0] != '\0')
+
+        char tokencode[] = "token1234,";
+        strcat(tokencode, toSend);
+
+        char character = tokencode[currentChar];
+        uint8_t amount1bits = 0;
+        for (uint8_t j = 0; j < 7; j++)
         {
-            char character = toSend[currentChar];
-            uint8_t amount1bits = 0;
-            for (uint8_t j = 0; j < 7; j++)
-            {
-                PORTA &= ~(1UL << PORTA5); //clock to LOW
-                _delay_ms(tokenProtocolDelay);
-
-                if (!!(character & (1 << (6 - j)))) //Set datapin to bit value
-                {
-                    PORTA |= 1UL << PORT4; //SET DATAPIN TO HIGH
-                    amount1bits++;
-                }
-                else
-                {
-                    PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
-                }
-                _delay_ms(tokenProtocolDelay);
-
-                PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
-                _delay_ms(tokenProtocolDelay);
-            }
-
-            //Parity bit evenparity
             PORTA &= ~(1UL << PORTA5); //clock to LOW
             _delay_ms(tokenProtocolDelay);
 
-            if (amount1bits % 2 == 0)
+            if (!!(character & (1 << (6 - j)))) //Set datapin to bit value
             {
                 PORTA |= 1UL << PORT4; //SET DATAPIN TO HIGH
+                amount1bits++;
             }
             else
             {
@@ -108,39 +92,56 @@ void SendingState::on_execute()
 
             PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
             _delay_ms(tokenProtocolDelay);
+        }
 
-            //ACK
-            PORTA &= ~(1UL << PORTA5); //clock to LOW
-            DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
+        //Parity bit evenparity
+        PORTA &= ~(1UL << PORTA5); //clock to LOW
+        _delay_ms(tokenProtocolDelay);
+
+        if (amount1bits % 2 == 0)
+        {
+            PORTA |= 1UL << PORT4; //SET DATAPIN TO HIGH
+        }
+        else
+        {
+            PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
+        }
+        _delay_ms(tokenProtocolDelay);
+
+        PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+        _delay_ms(tokenProtocolDelay);
+
+        //ACK
+        PORTA &= ~(1UL << PORTA5); //clock to LOW
+        DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
+        _delay_ms(tokenProtocolDelay);
+
+        //Set the datapint to input
+        if ((PINA >> PINA4) & 1) //Read DATA PIN
+        {
+            currentChar++;
+        }
+        _delay_ms(20);
+
+        PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+
+        //Set data to output
+        DDRA |= 1UL << DDRA4; //Turn PA4 to output
+
+        PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
+        _delay_ms(20);
+
+        if (currentChar >= strlen(tokencode))
+        {
+            //currentChar = 0;
+            //End bit
+            PORTA |= 1UL << PORTA4; //SET PA4 to high
+            _delay_ms(20);
+            PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 
-            //Set the datapint to input
-            if ((PINA >> PINA4) & 1) //Read DATA PIN
-            {
-                currentChar++;
-            }
-            _delay_ms(20);
-
-            PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
-
-            //Set data to output
-            DDRA |= 1UL << DDRA4; //Turn PA4 to output
-
-            PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
-            _delay_ms(20);
-
-            if (currentChar >= strlen(toSend))
-            {
-                //currentChar = 0;
-                //End bit
-                PORTA |= 1UL << PORTA4; //SET PA4 to high
-                _delay_ms(20);
-                PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
-                _delay_ms(tokenProtocolDelay);
-
-                //If last character has been send
-                _statemachine->setState(StateNumber::SLEEP);
-            }
+            //If last character has been send
+            _statemachine->setState(StateNumber::SLEEP);
         }
     }
 }

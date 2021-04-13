@@ -28,11 +28,6 @@ void InitState::on_start()
     else
     {
         _statemachine->setState(StateNumber::SENDING);
-        Event e{
-            EventName::SendData,
-            "tokentoken"
-        };
-        _statemachine->handle_event(e);
     }
 }
 
