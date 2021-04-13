@@ -1,5 +1,5 @@
-#ifndef RECEIVINGSTATE_H
-#define RECEIVINGSTATE_H
+#ifndef SENDINGSTATE_H
+#define SENDINGSTATE_H
 
 #include "WString.h"
 #include "Event.h"
@@ -7,23 +7,19 @@
 
 class Statemachine;
 
-class ReceivingState
+class SendingState
 {
 private:
     Statemachine *_statemachine;
     RF24 *_radio;
     bool _isBase;
 
-    bool hasStarted;
-    uint8_t topClockBitNumber;
+    char * toSend;
+    uint8_t currentChar;
+    bool waitingForAck;
+    long timeSinceSendForAck;
 
-    bool hasClockLineRised;
-
-    char buffer;
-    uint8_t amount1bits;
-    String receivedText;
-    char receivedText2[32];
-    bool sendAck;
+    bool hasEvent;
 
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);
@@ -31,10 +27,9 @@ public:
     void on_execute();
     void on_event(Event e);
     void on_exit();
-
-    ReceivingState()
+    SendingState()
     {
     }
 };
 
-#endif // RECEIVINGSTATE_H
+#endif // INITSTATE_H

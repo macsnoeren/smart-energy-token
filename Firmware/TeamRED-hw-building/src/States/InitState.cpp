@@ -1,13 +1,12 @@
 #include "States/InitState.h"
 #include "Settings.h"
+#include "Statemachine.h"
 
-void InitState::on_init(StateInitVariables stateInitVariables)
+void InitState::on_init(Statemachine* statemachine,RF24* radio,bool isBase)
 {
-    State::on_init(stateInitVariables); //call general init of state
-
-    //Init token protocol
-    tokenprotocol *protocol = tokenprotocol::instance();                           //Setup token protocol
-    _isBase ? protocol->setup(radio, _isBase) : protocol->setup(nullptr, _isBase); //setup the protocol
+    _statemachine = statemachine;
+    _radio = radio;
+    _isBase = isBase;
 
     // Disable not needed components
 
@@ -22,19 +21,18 @@ void InitState::on_init(StateInitVariables stateInitVariables)
 void InitState::on_start()
 {
     // init all variables that need to be reset when the state enters
-
-    if (debug)
+    if (_isBase)
     {
-        if (_isBase)
-        {
-            String text = "Start InitState";
-            radio->write(text.c_str(), strlen(text.c_str()));
-            _statemachine->setState(StateNumber::SLEEP);
-        }
-        else
-        {
-            _statemachine->setState(StateNumber::SENDING);
-        }
+        _statemachine->setState(StateNumber::SLEEP);
+    }
+    else
+    {
+        _statemachine->setState(StateNumber::SENDING);
+        Event e{
+            EventName::SendData,
+            "tokentoken"
+        };
+        _statemachine->handle_event(e);
     }
 }
 
@@ -43,13 +41,11 @@ void InitState::on_execute()
 {
     if (!_isBase)
     {
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->send("Test");
     }
     else
     {
         String text = "test";
-        radio->write(text.c_str(), strlen(text.c_str()));
+        _radio->write(text.c_str(), strlen(text.c_str()));
     }
 }
 

@@ -1,0 +1,13 @@
+{signal: [
+  {node: '....s.............................e.'},
+  {name: 'clk', wave: '10..0.10.10.10.10.10.10.10.1........', data:['Start'] ,node :'....a.............................b..'},
+  {name: 'dat', wave: '0.10.3..5..3..5..3..5..3..4.0|7.0|.10', data: ['Bit1', 'Bit2', 'Bit3', 'Bit4','Bit5','Bit6','Bit7','Parity bit','ack']},
+  {},
+  //{name: 'ack', wave: '0............................|7.0|..',data:['ack']}
+],edge:[
+  's-e Signals per char,repeat for all the charachters,if no ack repeat the last char again ','a-s','b-e'
+],head:{
+  text:"Digital timing diagram tokenprotocol"
+},foot:{
+  tick:0
+}}

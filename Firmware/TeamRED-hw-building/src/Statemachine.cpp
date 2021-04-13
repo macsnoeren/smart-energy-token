@@ -3,17 +3,16 @@
 #include "States/ReceivingState.h"
 #include "States/SleepState.h"
 #include "States/RemovedTopState.h"
+#include "States/SendingState.h"
 
-void Statemachine::on_init()
+void Statemachine::on_init(RF24 radio)
 {
     //Init radio before everything cause everystate needs the radio for debugging
-    RF24 radio(PA3, PA2);            //radio variable
-    const byte address[6] = "buil1"; //Addres of the radio
-    bool isBase = radio.begin();     //check if radio is connected
+    const byte address[6] = "test1";
+    bool isBase = radio.begin(); //check if radio is connected
     if (isBase)
     {
         radio.openWritingPipe(address); //Set the radio writing addres
-        radio.setPALevel(RF24_PA_MIN);  //Set the PA level
         radio.stopListening();          //Set the radio to send mode
         delay(4000);                    //Delay for the radio to proper initalize might not be needed
     }
@@ -21,47 +20,124 @@ void Statemachine::on_init()
     {
         SPI.end();
     }
-
-    //Init state variables that they all need
-    StateInitVariables initVar = {
-        this,
-        isBase,
-        &radio};
-
-    _currentState = StateNumber::INIT; //Set the currentstate to the startState
-
-    // TODO init states
-    states[StateNumber::INIT] = new InitState();
-    states[StateNumber::RECEIVING] = new ReceivingState();
-    states[StateNumber::REMOVEDTOP] = new RemovedTopState();
-    states[StateNumber::SENDING] = new InitState();
-    states[StateNumber::SLEEP] = new SleepState();
-
-    for (size_t i = 0; i < NumberOfStates; i++)
+    if (isBase)
     {
-        states[i]->on_init(initVar);
+        delay(100);
+        String text = "Starting 123";
+        radio.write(text.c_str(), strlen(text.c_str()));
+
+        delay(100);
     }
 
-    states[_currentState]->on_start();
+    hasTopToken = false;
+    codes = "";
+    currentState = StateNumber::INIT;
+
+    _radio = &radio;
+
+    initState.on_init(this, &radio, isBase);
+    receivingState.on_init(this, &radio, isBase);
+    sleepState.on_init(this, &radio, isBase);
+    sendingState.on_init(this, &radio, isBase);
+    removedTopState.on_init(this, &radio, isBase);
+
+    initState.on_start();
 }
 
 void Statemachine::on_execute()
 {
-    states[_currentState]->on_execute();
+    switch (currentState)
+    {
+    case StateNumber::INIT:
+        initState.on_execute();
+        break;
+    case StateNumber::REMOVEDTOP:
+        removedTopState.on_execute();
+        break;
+    case StateNumber::RECEIVING:
+        receivingState.on_execute();
+        break;
+    case StateNumber::SENDING:
+        sendingState.on_execute();
+        break;
+    case StateNumber::SLEEP:
+        sleepState.on_execute();
+        break;
+    }
 }
 
 void Statemachine::handle_event(Event e)
 {
-    states[_currentState]->on_event(e);
+    switch (currentState)
+    {
+    case StateNumber::INIT:
+        initState.on_event(e);
+        break;
+    case StateNumber::REMOVEDTOP:
+        removedTopState.on_event(e);
+        break;
+    case StateNumber::RECEIVING:
+        receivingState.on_event(e);
+        break;
+    case StateNumber::SENDING:
+        sendingState.on_event(e);
+        break;
+    case StateNumber::SLEEP:
+        sleepState.on_event(e);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void Statemachine::setState(StateNumber newState)
 {
-    states[_currentState]->on_exit();
+    switch (currentState)
+    {
+    case StateNumber::INIT:
+        initState.on_exit();
+        break;
+    case StateNumber::REMOVEDTOP:
+        removedTopState.on_exit();
+        break;
+    case StateNumber::RECEIVING:
+        receivingState.on_exit();
+        break;
+    case StateNumber::SENDING:
+        sendingState.on_exit();
+        break;
+    case StateNumber::SLEEP:
+        sleepState.on_exit();
+        break;
 
-    _currentState = newState;
+    default:
+        break;
+    }
 
-    states[_currentState]->on_start();
+    currentState = newState;
+
+    switch (currentState)
+    {
+    case StateNumber::INIT:
+        initState.on_start();
+        break;
+    case StateNumber::REMOVEDTOP:
+        removedTopState.on_start();
+        break;
+    case StateNumber::RECEIVING:
+        receivingState.on_start();
+        break;
+    case StateNumber::SENDING:
+        sendingState.on_start();
+        break;
+    case StateNumber::SLEEP:
+        sleepState.on_start();
+        break;
+
+    default:
+        break;
+    }
 }
 
 Statemachine::Statemachine()

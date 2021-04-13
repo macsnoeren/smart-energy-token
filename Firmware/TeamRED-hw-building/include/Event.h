@@ -8,12 +8,13 @@ enum EventName {
     ReceivedTopClockFallingInterrupt,
     ReceivedTopDataRisingInterrupt,
     ReceivedTopDataFallingInterrupt,
+    SendData,
 };
 
 struct Event
 {
     EventName name;
-    String __eventData;
+    char * eventData;
 };
 
 

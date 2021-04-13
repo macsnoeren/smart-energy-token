@@ -5,29 +5,29 @@
 #include "statemachine.h"
 #include "Interrupt.h"
 
-
 #define SET_BIT(where, bit_number) ((where) |= 1 << (bit_number))
 #define RESET_BIT(where, bit_number) ((where) &= ~(1 << (bit_number)))
 
-#include "tokenprotocol.h"
 #include "Statemachine.h"
 
-Statemachine *machine;
-
+Statemachine machine;
+RF24 radio(PA3, PA2); //radio variable
 
 void setup()
 {
-    machine = new Statemachine(); //Create the statemachine
-
     RESET_BIT(DDRA, DDRA1); //SET PA1 to output otherwise crash
     SET_BIT(DDRA, DDRA2);   //SET PA2 to output otherwise crash
 
-    Interrupt::setStatemachine(machine);
+    
 
-    machine->on_init();
+    Interrupt::setStatemachine(&machine);
+
+    machine.on_init(radio);
 }
 
 void loop()
 {
-    machine->on_execute();
+    // String text = "loop..";
+    // radio.write(text.c_str(),strlen(text.c_str()));
+    machine.on_execute();
 }

@@ -1,10 +1,13 @@
 #include "States/SleepState.h"
 #include <avr/sleep.h>
 #include "Settings.h"
+#include "Statemachine.h"
 
-void SleepState::on_init(StateInitVariables stateInitVariables)
+void SleepState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 {
-    State::on_init(stateInitVariables); //call general init of state
+    _statemachine = statemachine;
+    _radio = radio;
+    _isBase = isBase;
 }
 
 void SleepState::on_start()
@@ -28,33 +31,27 @@ void SleepState::on_start()
     {
         if (_isBase)
         {
-            delay(100);
-
             String text = "Start Sleep";
-            radio->write(text.c_str(), strlen(text.c_str()));
-
-            delay(100);
+            _radio->write(text.c_str(), strlen(text.c_str()));
         }
     }
     delay(100);
 
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    //set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
-    sleep_mode();
+    //sleep_mode();
 }
 
 //Main loop of the state
 void SleepState::on_execute()
 {
-    if (!_isBase && hasReceivedEvent)
+    if (!_isBase)
     {
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->send("Sleep state");
     }
     else
     {
         String text = "Sleep state";
-        radio->write(text.c_str(), strlen(text.c_str()));
+        //_radio->write(text.c_str(), strlen(text.c_str()));
     }
 }
 
@@ -62,12 +59,14 @@ void SleepState::on_execute()
 void SleepState::on_event(Event e)
 {
     hasReceivedEvent = true;
-    // String text = "Received event";
-    // radio->write(text.c_str(), strlen(text.c_str()));
+
     switch (e.name)
     {
     case EventName::ReceivedTopDataRisingInterrupt:
-        _statemachine->setState(StateNumber::REMOVEDTOP);
+        if (_statemachine->hasTopToken)
+        {
+            _statemachine->setState(StateNumber::REMOVEDTOP);
+        }
         break;
     case EventName::ReceivedTopClockFallingInterrupt:
         _statemachine->setState(StateNumber::RECEIVING);

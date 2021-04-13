@@ -1,5 +1,6 @@
 #ifndef STATEINITVARIABLES_H
 #define STATEINITVARIABLES_H
+
 #include "Statemachine.h"
 #include <RF24.h>
 

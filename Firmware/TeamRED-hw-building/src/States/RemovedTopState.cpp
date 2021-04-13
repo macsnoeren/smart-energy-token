@@ -1,10 +1,13 @@
 #include "States/RemovedTopState.h"
-#include <avr/sleep.h>
 #include "Settings.h"
+#include "Statemachine.h"
 
-void RemovedTopState::on_init(StateInitVariables stateInitVariables)
+
+void RemovedTopState::on_init(Statemachine* statemachine,RF24* radio,bool isBase)
 {
-    State::on_init(stateInitVariables); //call general init of state
+    _statemachine = statemachine;
+    _radio = radio;
+    _isBase = isBase;
 }
 
 void RemovedTopState::on_start()
@@ -15,9 +18,13 @@ void RemovedTopState::on_start()
         if (_isBase)
         {
             String text = "Start RemovedTopState";
-            radio->write(text.c_str(), strlen(text.c_str()));
+            _radio->write(text.c_str(), strlen(text.c_str()));
         }
     }
+
+    _statemachine->setState(StateNumber::SENDING);
+
+    _statemachine->hasTopToken = false;
 }
 
 //Main loop of the state
@@ -25,13 +32,11 @@ void RemovedTopState::on_execute()
 {
     if (!_isBase)
     {
-        tokenprotocol *protocol = tokenprotocol::instance();
-        protocol->send("RemovedTopState");
     }
     else
     {
         String text = "RemovedTopState";
-        radio->write(text.c_str(), strlen(text.c_str()));
+        _radio->write(text.c_str(), strlen(text.c_str()));
     }
 }
 
