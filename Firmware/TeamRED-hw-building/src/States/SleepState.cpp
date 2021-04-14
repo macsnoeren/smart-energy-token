@@ -27,14 +27,14 @@ void SleepState::on_start()
 
     hasReceivedEvent = false;
 
-    if (debug)
-    {
-        if (_isBase)
-        {
-            String text = "Start Sleep";
-            _radio->write(text.c_str(), strlen(text.c_str()));
-        }
-    }
+    // if (debug)
+    // {
+    //     if (_isBase)
+    //     {
+    //         String text = "Start Sleep";
+    //         _radio->write(text.c_str(), strlen(text.c_str()));
+    //     }
+    // }
     delay(100);
 
     //set_sleep_mode(SLEEP_MODE_PWR_DOWN);

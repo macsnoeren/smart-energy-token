@@ -92,6 +92,8 @@ void SendingState::on_execute()
 
             PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
             _delay_ms(tokenProtocolDelay);
+            PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
+            _delay_ms(tokenProtocolDelay);
         }
 
         //Parity bit evenparity
@@ -113,6 +115,14 @@ void SendingState::on_execute()
 
         //ACK
         PORTA &= ~(1UL << PORTA5); //clock to LOW
+        _delay_ms(tokenProtocolDelay);
+
+        PORTA |= 1UL << PORTA4; // Set DATA HIgh
+        _delay_ms(tokenProtocolDelay);
+
+        PORTA &= ~(1UL << PORTA4); // Set data to LOW
+        _delay_ms(tokenProtocolDelay);
+
         DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
         _delay_ms(tokenProtocolDelay);
 
@@ -121,9 +131,10 @@ void SendingState::on_execute()
         {
             currentChar++;
         }
-        _delay_ms(20);
+        _delay_ms(40);
 
         PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+        _delay_ms(tokenProtocolDelay);
 
         //Set data to output
         DDRA |= 1UL << DDRA4; //Turn PA4 to output
@@ -138,7 +149,7 @@ void SendingState::on_execute()
             PORTA |= 1UL << PORTA4; //SET PA4 to high
             _delay_ms(20);
             PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
-            _delay_ms(tokenProtocolDelay);
+            _delay_ms(20);
 
             //If last character has been send
             _statemachine->setState(StateNumber::SLEEP);

@@ -24,6 +24,7 @@ private:
     String receivedText;
     char receivedText2[32];
     bool sendAck;
+    bool ackHigh;
 
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);

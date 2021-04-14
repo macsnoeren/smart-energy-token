@@ -20,14 +20,6 @@ void Statemachine::on_init(RF24 radio)
     {
         SPI.end();
     }
-    if (isBase)
-    {
-        delay(100);
-        String text = "Starting 123";
-        radio.write(text.c_str(), strlen(text.c_str()));
-
-        delay(100);
-    }
 
     hasTopToken = false;
     codes = "";
@@ -42,6 +34,15 @@ void Statemachine::on_init(RF24 radio)
     removedTopState.on_init(this, &radio, isBase);
 
     initState.on_start();
+
+    if (isBase)
+    {
+        delay(200);
+        String text = "Starting 123";
+        radio.write(text.c_str(), strlen(text.c_str()));
+
+        delay(100);
+    }
 }
 
 void Statemachine::on_execute()

@@ -13,14 +13,14 @@ void RemovedTopState::on_init(Statemachine* statemachine,RF24* radio,bool isBase
 void RemovedTopState::on_start()
 {
     // init all variables that need to be reset when the state enters
-    if (debug)
-    {
-        if (_isBase)
-        {
-            String text = "Start RemovedTopState";
-            _radio->write(text.c_str(), strlen(text.c_str()));
-        }
-    }
+    // if (debug)
+    // {
+    //     if (_isBase)
+    //     {
+    //         String text = "Start RemovedTopState";
+    //         _radio->write(text.c_str(), strlen(text.c_str()));
+    //     }
+    // }
 
     _statemachine->setState(StateNumber::SENDING);
 

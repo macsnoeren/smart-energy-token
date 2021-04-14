@@ -31,6 +31,7 @@ void ReceivingState::on_start()
     PCMSK1 |= 1UL << PCINT10;
 
     PUEB |= 1UL << 2; //enable pullup resitor for PB2
+    PUEA |= 1UL << 7; //enable pullup resitor for PA7
 
     sei();
 
@@ -71,17 +72,8 @@ void ReceivingState::on_event(Event e)
     switch (e.name)
     {
     case EventName::ReceivedTopClockFallingInterrupt:
-        if (sendAck)
-        {
-            DDRB |= 1UL << DDRB2; //TUrn PB2 to output
-
-            GIMSK &= ~(1UL << PCIE1); //set interrupt for pb2
-            PCMSK1 &= ~(1UL << PCINT10);
-
-            PORTB |= 1UL << PORTB2; // set BB2 to High;
-        }
-
         hasClockLineRised = false;
+
         // if (!hasStarted)
         // {
         //     hasStarted = true;
@@ -92,6 +84,9 @@ void ReceivingState::on_event(Event e)
 
         if (sendAck)
         {
+            String text = "Send ack";
+            _radio->write(text.c_str(), strlen(text.c_str()));
+            
             GIMSK |= 1UL << PCIE1; //set interrupt for pb2
             PCMSK1 |= 1UL << PCINT10;
 
@@ -125,15 +120,47 @@ void ReceivingState::on_event(Event e)
                     receivedText2[len + 1] = '\0';
 
                     receivedText += buffer;
-                    sendAck = true;
+                    ackHigh = true;
                 }
-
-                buffer = 0b00000000;
-                amount1bits = 0;
-                topClockBitNumber = 0;
+                else
+                {
+                    ackHigh = false;
+                    if (_isBase)
+                    {
+                        String text = "Wrong bit";
+                        _radio->write(text.c_str(), strlen(text.c_str()));
+                    }
+                }
             }
         }
 
+        break;
+
+    case EventName::ReceivedTopDataFallingInterrupt:
+        if (!hasClockLineRised)
+        {
+            DDRB |= 1UL << DDRB2; //TUrn PB2 to output
+
+            GIMSK &= ~(1UL << PCIE1); //disable interrupt for pb2
+            PCMSK1 &= ~(1UL << PCINT10);
+
+            if (ackHigh)
+            {
+                PORTB |= 1UL << PORTB2; // set BB2 to High;
+
+                topClockBitNumber = 0;
+                amount1bits = 0;
+                buffer = 0b00000000;
+                amount1bits = 0;
+            }
+            else
+            {
+                PORTB &= ~(1UL << PORTB2);
+            }
+
+            sendAck = true;
+            ackHigh = false;
+        }
         break;
 
     case EventName::ReceivedTopDataRisingInterrupt:
@@ -153,5 +180,11 @@ void ReceivingState::on_event(Event e)
 
 void ReceivingState::on_exit()
 {
+    hasStarted = false;
+    topClockBitNumber = 0;
+    amount1bits = 0;
+    buffer = 0;
     receivedText = "";
+    hasClockLineRised = false;
+    sendAck = false;
 }
