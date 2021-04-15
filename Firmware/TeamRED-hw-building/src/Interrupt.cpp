@@ -1,8 +1,8 @@
 #include "Interrupt.h"
 #include "Event.h"
 
-bool prevTopData = true;
-bool prevTopClock = true;
+volatile bool prevTopData = true;
+volatile bool prevTopClock = true;
 
 Statemachine *statemachine;
 

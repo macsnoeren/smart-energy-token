@@ -35,7 +35,7 @@ void SleepState::on_start()
     //         _radio->write(text.c_str(), strlen(text.c_str()));
     //     }
     // }
-    delay(100);
+    //delay(100);
 
     //set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 

@@ -84,13 +84,13 @@ void ReceivingState::on_event(Event e)
 
         if (sendAck)
         {
-            String text = "Send ack";
-            _radio->write(text.c_str(), strlen(text.c_str()));
-            
-            GIMSK |= 1UL << PCIE1; //set interrupt for pb2
-            PCMSK1 |= 1UL << PCINT10;
+            // String text = "Send ack";
+            // _radio->write(text.c_str(), strlen(text.c_str()));
 
-            DDRB &= ~(1UL << DDRB2); //TUrn PB2 to input
+            // GIMSK |= 1UL << PCIE1; //set interrupt for pb2
+            // PCMSK1 |= 1UL << PCINT10;
+
+            // DDRB &= ~(1UL << DDRB2); //TUrn PB2 to input
 
             sendAck = false;
         }
@@ -139,24 +139,27 @@ void ReceivingState::on_event(Event e)
     case EventName::ReceivedTopDataFallingInterrupt:
         if (!hasClockLineRised)
         {
-            DDRB |= 1UL << DDRB2; //TUrn PB2 to output
+            String text = "Send ack";
+            _radio->write(text.c_str(), strlen(text.c_str()));
 
-            GIMSK &= ~(1UL << PCIE1); //disable interrupt for pb2
-            PCMSK1 &= ~(1UL << PCINT10);
+            // DDRB |= 1UL << DDRB2; //TUrn PB2 to output
+
+            // GIMSK &= ~(1UL << PCIE1); //disable interrupt for pb2
+            // PCMSK1 &= ~(1UL << PCINT10);
 
             if (ackHigh)
             {
                 PORTB |= 1UL << PORTB2; // set BB2 to High;
-
-                topClockBitNumber = 0;
-                amount1bits = 0;
-                buffer = 0b00000000;
-                amount1bits = 0;
             }
             else
             {
                 PORTB &= ~(1UL << PORTB2);
             }
+
+            topClockBitNumber = 0;
+            amount1bits = 0;
+            buffer = 0b00000000;
+            amount1bits = 0;
 
             sendAck = true;
             ackHigh = false;
@@ -165,7 +168,7 @@ void ReceivingState::on_event(Event e)
 
     case EventName::ReceivedTopDataRisingInterrupt:
         hasStarted = true;
-        if (hasClockLineRised && topClockBitNumber == 0)
+        if (hasClockLineRised && topClockBitNumber == 0 && strlen(receivedText2) > 9)
         {
             Event e{
                 EventName::SendData,

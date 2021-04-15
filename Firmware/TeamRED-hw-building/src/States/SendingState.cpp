@@ -27,6 +27,7 @@ void SendingState::on_start()
     // }
     waitingForAck = false;
     timeSinceSendForAck = 0;
+    currentChar = 0;
 
     if (!_isBase)
     {
@@ -60,9 +61,10 @@ void SendingState::on_execute()
 
         char buildingcode[] = "building12,";
         strcat(buildingcode, toSend);
-        _statemachine->codes = buildingcode;
-
+        
+        _delay_ms(tokenProtocolDelay);
         _radio->write(buildingcode, strlen(buildingcode));
+        _delay_ms(tokenProtocolDelay);
         _statemachine->setState(StateNumber::SLEEP);
         toSend[0] = '\0';
     }
@@ -131,7 +133,7 @@ void SendingState::on_execute()
         {
             currentChar++;
         }
-        _delay_ms(40);
+        _delay_ms(tokenProtocolDelay);
 
         PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
         _delay_ms(tokenProtocolDelay);
@@ -140,12 +142,13 @@ void SendingState::on_execute()
         DDRA |= 1UL << DDRA4; //Turn PA4 to output
 
         PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
-        _delay_ms(20);
+        _delay_ms(tokenProtocolDelay);
 
         if (currentChar >= strlen(tokencode))
         {
             //currentChar = 0;
             //End bit
+            _delay_ms(40);
             PORTA |= 1UL << PORTA4; //SET PA4 to high
             _delay_ms(20);
             PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
