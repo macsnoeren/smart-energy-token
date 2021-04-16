@@ -14,7 +14,6 @@ private:
     RF24 *_radio;
     bool _isBase;
 
-    bool hasStarted;
     uint8_t topClockBitNumber;
 
     volatile bool hasClockLineRised;

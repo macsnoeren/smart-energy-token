@@ -12,7 +12,6 @@ void ReceivingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBas
 void ReceivingState::on_start()
 {
     // init all variables that need to be reset when the state enters
-    hasStarted = false;
     topClockBitNumber = 0;
     amount1bits = 0;
     buffer = 0;
@@ -21,14 +20,11 @@ void ReceivingState::on_start()
     _statemachine->hasTopToken = true;
     sendAck = false;
 
-    // DDRB &= ~(1UL << DDRB2); //TUrn PB2 to input
-    // DDRA &= ~(1UL << DDRA7); //TUrn PA7 to input
+    GIMSK |= 1UL << CLOCKPIN_TOP_INTERRUPT_GIMSK; //set interrup for pa7
+    CLOCKPIN_TOP_INTERRUPT_REG |= 1UL << CLOCKPIN_TOP_INTERRUPT;
 
-    GIMSK |= 1UL << PCIE0; //set interrup for pa7
-    PCMSK0 |= 1UL << PCINT7;
-
-    GIMSK |= 1UL << PCIE1; //set interrupt for pb2
-    PCMSK1 |= 1UL << PCINT10;
+    GIMSK |= 1UL << DATAPIN_TOP_INTERRUPT_GIMSK; //set interrupt for pb2
+    DATAPIN_TOP_INTERRUPT_REG |= 1UL << DATAPIN_TOP_INTERRUPT;
 
     PUEB |= 1UL << 2; //enable pullup resitor for PB2
     PUEA |= 1UL << 7; //enable pullup resitor for PA7
@@ -52,17 +48,6 @@ void ReceivingState::on_start()
 //Main loop of the state
 void ReceivingState::on_execute()
 {
-    if (!_isBase)
-    {
-    }
-    else
-    {
-        if (hasStarted)
-        {
-            //_radio->write(receivedText2, strlen(receivedText2));
-        }
-    }
-
     delay(1);
 }
 
@@ -73,32 +58,19 @@ void ReceivingState::on_event(Event e)
     {
     case EventName::ReceivedTopClockFallingInterrupt:
         hasClockLineRised = false;
-
-        // if (!hasStarted)
-        // {
-        //     hasStarted = true;
-        // }
         break;
     case EventName::ReceivedTopClockRisingInterrupt:
         hasClockLineRised = true;
 
         if (sendAck)
         {
-            // String text = "Send ack";
-            // _radio->write(text.c_str(), strlen(text.c_str()));
-
-            // GIMSK |= 1UL << PCIE1; //set interrupt for pb2
-            // PCMSK1 |= 1UL << PCINT10;
-
-            // DDRB &= ~(1UL << DDRB2); //TUrn PB2 to input
-
             sendAck = false;
         }
         else
         {
             if (topClockBitNumber <= 6)
             {
-                if ((PINB >> PINB2) & 1) // read PB2 (Datapint)
+                if ((DATAPIN_TOP_READ_REG >> DATAPIN_TOP_READ) & 1) // read PB2 (Datapint)
                 {
                     buffer |= 1UL << (6 - topClockBitNumber); //Write 1
                     amount1bits++;
@@ -112,7 +84,7 @@ void ReceivingState::on_event(Event e)
             else if (topClockBitNumber == 7)
             {
                 //parity bit
-                bool parity = (PINB >> PINB2) & 1;
+                bool parity = (DATAPIN_TOP_READ_REG >> DATAPIN_TOP_READ) & 1;
                 if (parity == (amount1bits % 2 == 0))
                 {
                     int len = strlen(receivedText2);
@@ -139,21 +111,13 @@ void ReceivingState::on_event(Event e)
     case EventName::ReceivedTopDataFallingInterrupt:
         if (!hasClockLineRised)
         {
-            //String text = "Send ack";
-            //_radio->write(text.c_str(), strlen(text.c_str()));
-
-            // DDRB |= 1UL << DDRB2; //TUrn PB2 to output
-
-            // GIMSK &= ~(1UL << PCIE1); //disable interrupt for pb2
-            // PCMSK1 &= ~(1UL << PCINT10);
-
             if (ackHigh)
             {
-                PORTB |= 1UL << PORTB2; // set BB2 to High;
+                DATAPIN_TOP_WRITE_REG |= 1UL << DATAPIN_TOP_WRITE; // set BB2 to High;
             }
             else
             {
-                PORTB &= ~(1UL << PORTB2);
+                DATAPIN_TOP_WRITE_REG &= ~(1UL << DATAPIN_TOP_WRITE);
             }
 
             topClockBitNumber = 0;
@@ -167,7 +131,6 @@ void ReceivingState::on_event(Event e)
         break;
 
     case EventName::ReceivedTopDataRisingInterrupt:
-        hasStarted = true;
         if (hasClockLineRised && topClockBitNumber == 0 && strlen(receivedText2) > 9)
         {
             Event e{
@@ -183,7 +146,6 @@ void ReceivingState::on_event(Event e)
 
 void ReceivingState::on_exit()
 {
-    hasStarted = false;
     topClockBitNumber = 0;
     amount1bits = 0;
     buffer = 0;

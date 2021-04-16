@@ -42,7 +42,7 @@ void SendingState::on_start()
 
         PORTA &= ~(1UL << PORTA5); //Set PA5 to LOW Start bit
 
-        delay(200);
+        delay(20);
 
         // PORTA |= 1UL << PORTA4; //Set PA4 to high
 
@@ -126,7 +126,7 @@ void SendingState::on_execute()
         _delay_ms(tokenProtocolDelay);
 
         DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
-        _delay_ms(2 * tokenProtocolDelay);
+        _delay_ms(4 * tokenProtocolDelay);
 
         //Set the datapint to input
         if ((PINA >> PINA4) & 1) //Read DATA PIN
@@ -148,11 +148,11 @@ void SendingState::on_execute()
         {
             //currentChar = 0;
             //End bit
-            _delay_ms(40);
+            _delay_ms(20);
             PORTA |= 1UL << PORTA4; //SET PA4 to high
             _delay_ms(20);
             PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
-            _delay_ms(20);
+            _delay_ms(tokenProtocolDelay);
 
             //If last character has been send
             _statemachine->setState(StateNumber::SLEEP);

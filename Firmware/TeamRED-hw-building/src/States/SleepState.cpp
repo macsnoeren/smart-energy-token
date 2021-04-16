@@ -22,6 +22,7 @@ void SleepState::on_start()
     PCMSK1 |= 1UL << PCINT10;
 
     PUEB |= 1UL << 2; //enable pullup resitor for PB2
+    PUEA |= 1UL << 7; //enable pullup resitor for PB2
 
     sei();
 
@@ -35,8 +36,8 @@ void SleepState::on_start()
     //         _radio->write(text.c_str(), strlen(text.c_str()));
     //     }
     // }
-    //delay(100);
-    if(!_isBase)
+    delay(100);
+    if (!_isBase)
     {
         delay(2000);
     }
@@ -49,7 +50,7 @@ void SleepState::on_execute()
     {
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
-        sleep_mode();
+        //sleep_mode();
         hasStarted = true;
     }
     if (!_isBase)
@@ -58,7 +59,7 @@ void SleepState::on_execute()
     else
     {
         String text = "Sleep state";
-        //_radio->write(text.c_str(), strlen(text.c_str()));
+        _radio->write(text.c_str(), strlen(text.c_str()));
     }
 }
 
@@ -92,6 +93,7 @@ void SleepState::on_exit()
     PCMSK1 &= ~(1UL << PCINT10);
 
     PUEB &= ~(1UL << 2); //disable pullup resitor pb2
+    PUEA &= ~(1UL << 7); //disable pullup resistor PA7
 
     cli();
 }
