@@ -17,38 +17,25 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 void SendingState::on_start()
 {
     // init all variables that need to be reset when the state enters
-    // if (debug)
-    // {
-    //     if (_isBase)
-    //     {
-    //         String text = "Sending state";
-    //         _radio->write(text.c_str(), strlen(text.c_str()));
-    //     }
-    // }
     waitingForAck = false;
     timeSinceSendForAck = 0;
     currentChar = 0;
 
     if (!_isBase)
     {
-        delay(300);
+        delay(1000);
 
-        DDRA |= 1UL << DDRA5; //TUrn PA5 to output
-        DDRA |= 1UL << DDRA4; //Turn PA4 to output
+        CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output
 
-        PORTA |= 1UL << PORTA5; //Set PA5 to high
+        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set PA5 to high
 
         _delay_ms(tokenProtocolDelay);
 
-        PORTA &= ~(1UL << PORTA5); //Set PA5 to LOW Start bit
+        CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
 
         delay(20);
 
-        // PORTA |= 1UL << PORTA4; //Set PA4 to high
-
-        // _delay_ms(tokenProtocolDelay);
-
-        // PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
     }
 }
 
@@ -57,8 +44,6 @@ void SendingState::on_execute()
 {
     if (_isBase)
     {
-        //_radio->write(toSend, strlen(toSend));
-
         char buildingcode[] = "building12,";
         strcat(buildingcode, toSend);
         
@@ -78,70 +63,70 @@ void SendingState::on_execute()
         uint8_t amount1bits = 0;
         for (uint8_t j = 0; j < 7; j++)
         {
-            PORTA &= ~(1UL << PORTA5); //clock to LOW
+            CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //clock to LOW
             _delay_ms(tokenProtocolDelay);
 
             if (!!(character & (1 << (6 - j)))) //Set datapin to bit value
             {
-                PORTA |= 1UL << PORT4; //SET DATAPIN TO HIGH
+                DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET DATAPIN TO HIGH
                 amount1bits++;
             }
             else
             {
-                PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
+                DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //SET DATAPIN TO LOW
             }
             _delay_ms(tokenProtocolDelay);
 
-            PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+            CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //SET CLOCKPIN TO HIGH
             _delay_ms(tokenProtocolDelay);
-            PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
+            DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //SET DATAPIN TO LOW
             _delay_ms(tokenProtocolDelay);
         }
 
         //Parity bit evenparity
-        PORTA &= ~(1UL << PORTA5); //clock to LOW
+        CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //clock to LOW
         _delay_ms(tokenProtocolDelay);
 
         if (amount1bits % 2 == 0)
         {
-            PORTA |= 1UL << PORT4; //SET DATAPIN TO HIGH
+            DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET DATAPIN TO HIGH
         }
         else
         {
-            PORTA &= ~(1UL << PORTA4); //SET DATAPIN TO LOW
+            DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //SET DATAPIN TO LOW
         }
         _delay_ms(tokenProtocolDelay);
 
-        PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //SET CLOCKPIN TO HIGH
         _delay_ms(tokenProtocolDelay);
 
         //ACK
-        PORTA &= ~(1UL << PORTA5); //clock to LOW
+        CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //clock to LOW
         _delay_ms(tokenProtocolDelay);
 
-        PORTA |= 1UL << PORTA4; // Set DATA HIgh
+        DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; // Set DATA HIgh
         _delay_ms(tokenProtocolDelay);
 
-        PORTA &= ~(1UL << PORTA4); // Set data to LOW
+        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); // Set data to LOW
         _delay_ms(tokenProtocolDelay);
 
-        DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT);   //Turn PA4 to input data to input
         _delay_ms(4 * tokenProtocolDelay);
 
         //Set the datapint to input
-        if ((PINA >> PINA4) & 1) //Read DATA PIN
+        if ((DATAPIN_BOTTOM_READ_REG >> DATAPIN_BOTTOM_READ) & 1) //Read DATA PIN
         {
             currentChar++;
         }
         _delay_ms(tokenProtocolDelay);
 
-        PORTA |= 1UL << PORTA5; //SET CLOCKPIN TO HIGH
+        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //SET CLOCKPIN TO HIGH
         _delay_ms(tokenProtocolDelay);
 
         //Set data to output
         DDRA |= 1UL << DDRA4; //Turn PA4 to output
 
-        PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
+        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
         _delay_ms(tokenProtocolDelay);
 
         if (currentChar >= strlen(tokencode))
@@ -149,9 +134,9 @@ void SendingState::on_execute()
             //currentChar = 0;
             //End bit
             _delay_ms(20);
-            PORTA |= 1UL << PORTA4; //SET PA4 to high
+            DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET PA4 to high
             _delay_ms(20);
-            PORTA &= ~(1UL << PORTA4); //Set PA4 to LOW
+            DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 
             //If last character has been send
@@ -178,8 +163,8 @@ void SendingState::on_event(Event e)
 
 void SendingState::on_exit()
 {
-    //pinMode(PORTA4,INPUT);
-    //pinMode(PORTA5,INPUT);
+    //pinMode(DATAPIN_BOTTOM_WRITE,INPUT);
+    //pinMode(CLOCKPIN_BOTTOM_WRITE,INPUT);
     // DDRA &= ~(1UL << DDRA4); //Turn PA4 to input
     // DDRA &= ~(1UL << DDRA5); //Turn PA5 to input
 }
