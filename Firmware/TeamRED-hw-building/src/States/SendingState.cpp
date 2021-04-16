@@ -31,7 +31,7 @@ void SendingState::on_start()
 
     if (!_isBase)
     {
-        delay(500);
+        delay(300);
 
         DDRA |= 1UL << DDRA5; //TUrn PA5 to output
         DDRA |= 1UL << DDRA4; //Turn PA4 to output
@@ -42,7 +42,7 @@ void SendingState::on_start()
 
         PORTA &= ~(1UL << PORTA5); //Set PA5 to LOW Start bit
 
-        delay(500);
+        delay(200);
 
         // PORTA |= 1UL << PORTA4; //Set PA4 to high
 
@@ -126,7 +126,7 @@ void SendingState::on_execute()
         _delay_ms(tokenProtocolDelay);
 
         DDRA &= ~(1UL << DDRA4);   //Turn PA4 to input data to input
-        _delay_ms(tokenProtocolDelay);
+        _delay_ms(2 * tokenProtocolDelay);
 
         //Set the datapint to input
         if ((PINA >> PINA4) & 1) //Read DATA PIN

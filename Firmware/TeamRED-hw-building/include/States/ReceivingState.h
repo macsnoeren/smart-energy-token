@@ -17,12 +17,13 @@ private:
     bool hasStarted;
     uint8_t topClockBitNumber;
 
-    bool hasClockLineRised;
+    volatile bool hasClockLineRised;
 
     char buffer;
     uint8_t amount1bits;
     String receivedText;
     char receivedText2[32];
+
     bool sendAck;
     bool ackHigh;
 

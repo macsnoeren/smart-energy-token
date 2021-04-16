@@ -14,7 +14,7 @@ private:
     RF24 *_radio;
     bool _isBase;
 
-    bool hasReceivedEvent;
+    bool hasStarted;
 
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);

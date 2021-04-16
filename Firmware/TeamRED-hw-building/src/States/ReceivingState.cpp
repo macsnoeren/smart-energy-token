@@ -139,8 +139,8 @@ void ReceivingState::on_event(Event e)
     case EventName::ReceivedTopDataFallingInterrupt:
         if (!hasClockLineRised)
         {
-            String text = "Send ack";
-            _radio->write(text.c_str(), strlen(text.c_str()));
+            //String text = "Send ack";
+            //_radio->write(text.c_str(), strlen(text.c_str()));
 
             // DDRB |= 1UL << DDRB2; //TUrn PB2 to output
 

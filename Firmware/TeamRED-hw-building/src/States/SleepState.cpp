@@ -25,7 +25,7 @@ void SleepState::on_start()
 
     sei();
 
-    hasReceivedEvent = false;
+    hasStarted = false;
 
     // if (debug)
     // {
@@ -36,15 +36,22 @@ void SleepState::on_start()
     //     }
     // }
     //delay(100);
-
-    //set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-
-    //sleep_mode();
+    if(!_isBase)
+    {
+        delay(2000);
+    }
 }
 
 //Main loop of the state
 void SleepState::on_execute()
 {
+    if (!hasStarted && _isBase)
+    {
+        set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+
+        sleep_mode();
+        hasStarted = true;
+    }
     if (!_isBase)
     {
     }
@@ -58,8 +65,6 @@ void SleepState::on_execute()
 //Handels events when received
 void SleepState::on_event(Event e)
 {
-    hasReceivedEvent = true;
-
     switch (e.name)
     {
     case EventName::ReceivedTopDataRisingInterrupt:
