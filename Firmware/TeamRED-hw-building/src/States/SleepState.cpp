@@ -28,14 +28,6 @@ void SleepState::on_start()
 
     hasStarted = false;
 
-    // if (debug)
-    // {
-    //     if (_isBase)
-    //     {
-    //         String text = "Start Sleep";
-    //         _radio->write(text.c_str(), strlen(text.c_str()));
-    //     }
-    // }
     delay(100);
     if (!_isBase)
     {
@@ -50,7 +42,7 @@ void SleepState::on_execute()
     {
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
-        //sleep_mode();
+        sleep_mode();
         hasStarted = true;
     }
     if (!_isBase)
@@ -59,7 +51,8 @@ void SleepState::on_execute()
     else
     {
         String text = "Sleep state";
-        _radio->write(text.c_str(), strlen(text.c_str()));
+        //_radio->write(text.c_str(), strlen(text.c_str()));
+
     }
 }
 

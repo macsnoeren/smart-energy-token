@@ -23,7 +23,7 @@ void SendingState::on_start()
 
     if (!_isBase)
     {
-        delay(1000);
+        delay(300);
 
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
         DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output

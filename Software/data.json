@@ -1,0 +1,15 @@
+{
+  "buildings": [
+    {
+      "serial_number": "building12",
+      "building_code" : "GMN"
+    }
+  ],
+  "tokens" : [
+      {
+          "serial_number":  "token1234",
+          "technologyGroup" : "Solar panel",
+          "type" : "TFPV"
+      }
+  ]
+}

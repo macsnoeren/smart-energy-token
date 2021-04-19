@@ -65,6 +65,7 @@ void ReceivingState::on_event(Event e)
         if (sendAck)
         {
             sendAck = false;
+            DATAPIN_TOP_OUTPUT_REG &= ~(1UL << DATAPIN_TOP_OUTPUT);
         }
         else
         {
@@ -111,6 +112,7 @@ void ReceivingState::on_event(Event e)
     case EventName::ReceivedTopDataFallingInterrupt:
         if (!hasClockLineRised)
         {
+            DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT;
             if (ackHigh)
             {
                 DATAPIN_TOP_WRITE_REG |= 1UL << DATAPIN_TOP_WRITE; // set BB2 to High;
