@@ -1,9 +1,10 @@
 import serial
 import io
 import json
+import requests
 
 try:
-    gateway = serial.Serial("COM5", 9600, timeout=1)
+    gateway = serial.Serial("COM3", 9600, timeout=1)
 
 except:
     print('Please check port')
@@ -13,6 +14,7 @@ with open('data.json') as f:
     data = json.load(f)
 
 sio = io.TextIOWrapper(io.BufferedRWPair(gateway, gateway), newline='\r\n')
+resp = requests.get('http://localhost:8000/apiv1/tokens')
 
 
 while(True):
@@ -22,18 +24,36 @@ while(True):
         isBuilding: bool = True
         building = {}
         tokens = []
-
+        print(line)
         for value in tokenValues:
             if isBuilding:
                 isBuilding = False
                 indexes = [index for index in range(len(
                     data["buildings"])) if data["buildings"][index].get('serial_number') == value]
-                building = data["buildings"][indexes[0]]
-            else: 
+                if len(indexes) > 0:
+                  building = data["buildings"][indexes[0]]
+            else:
                 indexes = [index for index in range(len(
                     data["tokens"])) if data["tokens"][index].get('serial_number') == value]
                 for index in indexes:
                     tokens.append(data["tokens"][index])
-                    
-        print(building)
-        print(tokens)
+        if len(tokens) == 0 and building != {}:
+            toSend = {
+              "building_code": building.get('building_code'),
+              "type" :"",
+              "technologyGroup" : ""
+            }
+            resp = requests.post('http://127.0.0.1:8000/apiv1/tokens/hardware', json=toSend)
+            # print(resp.json())
+
+        for token in tokens:
+            toSend = {
+              "building_code": building.get('building_code'),
+              "type" : token.get('type'),
+              "technologyGroup" : token.get('technologyGroup')
+            }
+            resp = requests.post('http://127.0.0.1:8000/apiv1/tokens/hardware', json=toSend)
+            print(resp.json())
+
+        # print(building)
+        # print(tokens)

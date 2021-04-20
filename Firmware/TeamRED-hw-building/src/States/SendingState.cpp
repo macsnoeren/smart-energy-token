@@ -11,14 +11,13 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
     _radio = radio;
     _isBase = isBase;
 
-    toSend = "";
+    toSend[0] = '\0';
 }
 
 void SendingState::on_start()
 {
     // init all variables that need to be reset when the state enters
     waitingForAck = false;
-    timeSinceSendForAck = 0;
     currentChar = 0;
 
     if (!_isBase)
@@ -26,7 +25,7 @@ void SendingState::on_start()
         delay(300);
 
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
-        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;   //Turn PA4 to output
 
         CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set PA5 to high
 
@@ -35,7 +34,6 @@ void SendingState::on_start()
         CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
 
         delay(20);
-
     }
 }
 
@@ -44,19 +42,22 @@ void SendingState::on_execute()
 {
     if (_isBase)
     {
-        char buildingcode[] = "building12,";
+        char buildingcode[64] = "building12,";
         strcat(buildingcode, toSend);
-        
-        _delay_ms(tokenProtocolDelay);
-        _radio->write(buildingcode, strlen(buildingcode));
-        _delay_ms(tokenProtocolDelay);
+
+        bool doneWriting = false;
+        while (!doneWriting)
+        {
+            doneWriting = _radio->write(buildingcode, strlen(buildingcode));
+        }
+
         _statemachine->setState(StateNumber::SLEEP);
         toSend[0] = '\0';
     }
     else
     {
 
-        char tokencode[] = "token1234,";
+        char tokencode[64] = "token1234,";
         strcat(tokencode, toSend);
 
         char character = tokencode[currentChar];
@@ -110,7 +111,7 @@ void SendingState::on_execute()
         DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); // Set data to LOW
         _delay_ms(tokenProtocolDelay);
 
-        DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT);   //Turn PA4 to input data to input
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT); //Turn PA4 to input data to input
         _delay_ms(4 * tokenProtocolDelay);
 
         //Set the datapint to input

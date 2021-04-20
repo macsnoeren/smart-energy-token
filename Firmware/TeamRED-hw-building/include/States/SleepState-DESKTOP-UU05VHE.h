@@ -16,9 +16,6 @@ private:
 
     bool hasStarted;
 
-    bool hasReceivedRemovedTop;
-    bool hasReceivedDataStart;
-
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);
     void on_start();

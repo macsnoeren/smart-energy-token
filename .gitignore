@@ -32,6 +32,9 @@ bld/
 [Ll]ogs/
 
 .env
+env
+.software/env
+software/env
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

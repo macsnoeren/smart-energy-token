@@ -48,7 +48,6 @@ void ReceivingState::on_start()
 //Main loop of the state
 void ReceivingState::on_execute()
 {
-    delay(1);
 }
 
 //Handels events when received

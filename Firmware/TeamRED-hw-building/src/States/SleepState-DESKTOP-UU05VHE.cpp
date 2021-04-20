@@ -27,10 +27,8 @@ void SleepState::on_start()
     sei();
 
     hasStarted = false;
-    hasReceivedRemovedTop = false;
-    hasReceivedDataStart = false;
 
-    //delay(100);
+    delay(100);
     if (!_isBase)
     {
         delay(2000);
@@ -46,19 +44,15 @@ void SleepState::on_execute()
 
         sleep_mode();
         hasStarted = true;
-        //delay(100);
     }
-
-    if (hasReceivedRemovedTop)
+    if (!_isBase)
     {
-        hasReceivedRemovedTop = false;
-        _statemachine->setState(StateNumber::REMOVEDTOP);
     }
-
-    if (hasReceivedDataStart)
+    else
     {
-        hasReceivedDataStart = false;
-        _statemachine->setState(StateNumber::RECEIVING);
+        String text = "Sleep state";
+        //_radio->write(text.c_str(), strlen(text.c_str()));
+
     }
 }
 
@@ -70,11 +64,11 @@ void SleepState::on_event(Event e)
     case EventName::ReceivedTopDataRisingInterrupt:
         if (_statemachine->hasTopToken)
         {
-            hasReceivedRemovedTop = true;
+            _statemachine->setState(StateNumber::REMOVEDTOP);
         }
         break;
     case EventName::ReceivedTopClockFallingInterrupt:
-        hasReceivedDataStart = true;
+        _statemachine->setState(StateNumber::RECEIVING);
     default:
         break;
     }

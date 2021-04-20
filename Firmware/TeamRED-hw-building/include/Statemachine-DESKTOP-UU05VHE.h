@@ -31,7 +31,6 @@ private:
     RF24 *_radio;
 
     StateNumber currentState;
-    bool isBase;
 
 public:
     void on_init(RF24 radio);

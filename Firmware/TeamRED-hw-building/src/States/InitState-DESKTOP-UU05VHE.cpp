@@ -34,7 +34,14 @@ void InitState::on_start()
 //Main loop of the state
 void InitState::on_execute()
 {
-
+    if (!_isBase)
+    {
+    }
+    else
+    {
+        String text = "test";
+        _radio->write(text.c_str(), strlen(text.c_str()));
+    }
 }
 
 //Handels events when received

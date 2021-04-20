@@ -9,7 +9,7 @@ void Statemachine::on_init(RF24 radio)
 {
     //Init radio before everything cause everystate needs the radio for debugging
     const byte address[6] = "test1";
-    isBase = radio.begin(); //check if radio is connected
+    bool isBase = radio.begin(); //check if radio is connected
     if (isBase)
     {
         radio.openWritingPipe(address); //Set the radio writing addres
@@ -34,6 +34,15 @@ void Statemachine::on_init(RF24 radio)
     removedTopState.on_init(this, &radio, isBase);
 
     initState.on_start();
+
+    if (isBase)
+    {
+        delay(200);
+        String text = "Starting 123";
+        radio.write(text.c_str(), strlen(text.c_str()));
+
+        delay(100);
+    }
 }
 
 void Statemachine::on_execute()
@@ -55,15 +64,6 @@ void Statemachine::on_execute()
     case StateNumber::SLEEP:
         sleepState.on_execute();
         break;
-    }
-
-    if (isBase)
-    {
-        SPI.end();
-        const byte address[6] = "test1";
-        _radio->begin(); //check if radio is connected
-        _radio->openWritingPipe(address);
-        _radio->stopListening();
     }
 }
 

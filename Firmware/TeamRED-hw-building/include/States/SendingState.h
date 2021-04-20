@@ -17,7 +17,6 @@ private:
     char * toSend;
     uint8_t currentChar;
     bool waitingForAck;
-    long timeSinceSendForAck;
 
     bool hasEvent;
 
