@@ -57,7 +57,7 @@ void SendingState::on_execute()
     else
     {
 
-        char tokencode[64] = "token1234,";
+        char tokencode[64] = "token2345,";
         strcat(tokencode, toSend);
 
         char character = tokencode[currentChar];
@@ -141,6 +141,8 @@ void SendingState::on_execute()
             _delay_ms(tokenProtocolDelay);
 
             //If last character has been send
+            toSend[0] = '\0';
+
             _statemachine->setState(StateNumber::SLEEP);
         }
     }

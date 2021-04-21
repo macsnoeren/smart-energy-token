@@ -4,7 +4,7 @@ import json
 import requests
 
 try:
-    gateway = serial.Serial("COM3", 9600, timeout=1)
+    gateway = serial.Serial("COM5", 9600, timeout=1)
 
 except:
     print('Please check port')
@@ -14,8 +14,6 @@ with open('data.json') as f:
     data = json.load(f)
 
 sio = io.TextIOWrapper(io.BufferedRWPair(gateway, gateway), newline='\r\n')
-resp = requests.get('http://localhost:8000/apiv1/tokens')
-
 
 while(True):
     line: str = sio.readline()
@@ -53,7 +51,7 @@ while(True):
               "technologyGroup" : token.get('technologyGroup')
             }
             resp = requests.post('http://127.0.0.1:8000/apiv1/tokens/hardware', json=toSend)
-            print(resp.json())
+            #print(resp.json())
 
         # print(building)
         # print(tokens)
