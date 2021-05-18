@@ -2,14 +2,19 @@
   "buildings": [
     {
       "serial_number": "building12",
-      "building_code" : "GMN"
+      "building_code": "GMN"
     }
   ],
-  "tokens" : [
-      {
-          "serial_number":  "token1234",
-          "technologyGroup" : "Solar panel",
-          "type" : "TFPV"
-      }
+  "tokens": [
+    {
+      "serial_number": "token1234",
+      "technologyGroup": "Solar panel",
+      "type": "TFPV"
+    },
+    {
+      "serial_number": "token2345",
+      "technologyGroup": "Battery",
+      "type": "BAT1"
+    }
   ]
 }
