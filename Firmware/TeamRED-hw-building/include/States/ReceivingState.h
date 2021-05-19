@@ -20,7 +20,6 @@ private:
 
     char buffer;
     uint8_t amount1bits;
-    String receivedText;
     char receivedText2[32];
 
     bool sendAck;

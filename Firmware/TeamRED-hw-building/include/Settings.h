@@ -1,5 +1,5 @@
 const bool debug = false;
-const uint8_t tokenProtocolDelay = 2;
+const uint8_t tokenProtocolDelay = 1;
 
 #define DATAPIN_TOP_READ PINB2
 #define DATAPIN_TOP_READ_REG PINB

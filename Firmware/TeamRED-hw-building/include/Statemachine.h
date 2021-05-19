@@ -34,7 +34,7 @@ private:
     bool isBase;
 
 public:
-    void on_init(RF24 radio);
+    void on_init(RF24 *radio);
     void on_execute();
     void handle_event(Event e);
 

@@ -26,7 +26,7 @@ void ReceivingState::on_start()
 
     DATAPIN_TOP_INTERRUPT_REG |= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
 
-    PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
+    //PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
     PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor for PA4
 
     // //Send ack back;

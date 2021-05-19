@@ -12,6 +12,8 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
     _isBase = isBase;
 
     toSend[0] = '\0';
+
+    delay(200);
 }
 
 void SendingState::on_start()
@@ -22,10 +24,9 @@ void SendingState::on_start()
 
     if (!_isBase)
     {
-        delay(300);
-
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
-        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;   //Turn PA4 to output
+
 
         CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set PA5 to high
 
@@ -57,7 +58,7 @@ void SendingState::on_execute()
     else
     {
 
-        char tokencode[64] = "token2345,";
+        char tokencode[64] = "token1234,";
         strcat(tokencode, toSend);
 
         char character = tokencode[currentChar];

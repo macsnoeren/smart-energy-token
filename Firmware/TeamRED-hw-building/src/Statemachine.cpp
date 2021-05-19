@@ -5,16 +5,16 @@
 #include "States/RemovedTopState.h"
 #include "States/SendingState.h"
 
-void Statemachine::on_init(RF24 radio)
+void Statemachine::on_init(RF24 *radio)
 {
     //Init radio before everything cause everystate needs the radio for debugging
     const byte address[6] = "test1";
-    isBase = radio.begin(); //check if radio is connected
+    isBase = radio->begin(); //check if radio is connected
     if (isBase)
     {
-        radio.openWritingPipe(address); //Set the radio writing addres
-        radio.stopListening();          //Set the radio to send mode
-        delay(4000);                    //Delay for the radio to proper initalize might not be needed
+        radio->openWritingPipe(address); //Set the radio writing addres
+        radio->stopListening();          //Set the radio to send mode
+        //delay(4000);                    //Delay for the radio to proper initalize might not be needed
     }
     else
     {
@@ -22,16 +22,15 @@ void Statemachine::on_init(RF24 radio)
     }
 
     hasTopToken = false;
-    codes = "";
     currentState = StateNumber::INIT;
 
-    _radio = &radio;
+    _radio = radio;
 
-    initState.on_init(this, &radio, isBase);
-    receivingState.on_init(this, &radio, isBase);
-    sleepState.on_init(this, &radio, isBase);
-    sendingState.on_init(this, &radio, isBase);
-    removedTopState.on_init(this, &radio, isBase);
+    initState.on_init(this, radio, isBase);
+    receivingState.on_init(this, radio, isBase);
+    sleepState.on_init(this, radio, isBase);
+    sendingState.on_init(this, radio, isBase);
+    removedTopState.on_init(this, radio, isBase);
 
     initState.on_start();
 }

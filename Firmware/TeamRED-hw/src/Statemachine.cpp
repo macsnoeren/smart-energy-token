@@ -31,7 +31,7 @@ void Statemachine::on_init(RF24 *radio)
     sleepState.on_init(this, radio, isBase);
     sendingState.on_init(this, radio, isBase);
     removedTopState.on_init(this, radio, isBase);
-    errorState.on_init(this,radio,isBase);
+    errorState.on_init(this, radio, isBase);
 
     PORTA_OUT |= 1UL << 7;
 

@@ -19,8 +19,6 @@ private:
     volatile bool hasReceivedRemovedTop;
     volatile bool hasReceivedDataStart;
 
-    long startTimeBlink;
-
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);
     void on_start();

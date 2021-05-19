@@ -22,8 +22,8 @@ void SleepState::on_start()
 
     DATAPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
 
-    PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor 
-    PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor 
+    //PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor
+    PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor
 
     sei();
 
@@ -35,8 +35,6 @@ void SleepState::on_start()
     {
         delay(2000);
     }
-
-    startTimeBlink = millis();
 }
 
 //Main loop of the state
@@ -44,18 +42,18 @@ void SleepState::on_execute()
 {
     PORTA_OUT |= 1UL << 7;
 
-    long current = millis();
-    if(current - startTimeBlink >= 1000)
-    {
-        PORTA_OUT ^= 1UL << 7;
-        startTimeBlink = current;
-    }
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+
+    sleep_enable();
+
+    sleep_mode();
 
     if (hasReceivedRemovedTop)
     {
         hasReceivedRemovedTop = false;
         _statemachine->setState(StateNumber::REMOVEDTOP);
-    }else if (hasReceivedDataStart)
+    }
+    else if (hasReceivedDataStart)
     {
         hasReceivedDataStart = false;
         _statemachine->setState(StateNumber::RECEIVING);
@@ -75,14 +73,6 @@ void SleepState::on_event(Event e)
             hasReceivedRemovedTop = true;
         }
         break;
-    case EventName::ReceivedTopClockRisingInterrupt:
-        if (_statemachine->hasTopToken)
-        {
-            PORTA_OUT &= ~(1UL << 7);
-
-            hasReceivedRemovedTop = true;
-        }
-        break;
     case EventName::ReceivedTopClockFallingInterrupt:
         hasReceivedDataStart = true;
     default:
@@ -92,16 +82,15 @@ void SleepState::on_event(Event e)
 
 void SleepState::on_exit()
 {
-    //sleep_disable();
+    sleep_disable();
 
     //disable interrupts
     CLOCKPIN_TOP_INTERRUPT_REG &= ~(1UL << CLOCKPIN_TOP_INTERRUPT); //Enale intterrupt
 
     DATAPIN_TOP_INTERRUPT_REG &= ~(1UL << DATAPIN_TOP_INTERRUPT); //Enable intterrupt
 
-    
-    PORTA_PIN5CTRL &= ~(1UL << 3); //enable pullup resitor 
-    PORTA_PIN4CTRL &= ~(1UL << 3); //enable pullup resitor 
+    PORTA_PIN5CTRL &= ~(1UL << 3); //enable pullup resitor
+    PORTA_PIN4CTRL &= ~(1UL << 3); //enable pullup resitor
 
     //cli();
 }

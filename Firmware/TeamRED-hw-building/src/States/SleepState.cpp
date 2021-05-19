@@ -12,7 +12,7 @@ void SleepState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 
 void SleepState::on_start()
 {
-    // init all variables that need to be reset when the state enters
+    // init all variables that need to be reset when the state enters   
 
     //Enable interrupts
     GIMSK |= 1UL << PCIE0; //set interrup for pa7
@@ -30,7 +30,6 @@ void SleepState::on_start()
     hasReceivedRemovedTop = false;
     hasReceivedDataStart = false;
 
-    //delay(100);
     if (!_isBase)
     {
         delay(2000);
@@ -46,7 +45,6 @@ void SleepState::on_execute()
 
         sleep_mode();
         hasStarted = true;
-        //delay(100);
     }
 
     if (hasReceivedRemovedTop)

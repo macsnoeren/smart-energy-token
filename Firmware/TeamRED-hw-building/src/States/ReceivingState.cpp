@@ -15,7 +15,6 @@ void ReceivingState::on_start()
     topClockBitNumber = 0;
     amount1bits = 0;
     buffer = 0;
-    receivedText = "";
     hasClockLineRised = false;
     _statemachine->hasTopToken = true;
     sendAck = false;
@@ -29,25 +28,22 @@ void ReceivingState::on_start()
     PUEB |= 1UL << 2; //enable pullup resitor for PB2
     PUEA |= 1UL << 7; //enable pullup resitor for PA7
 
+    // //Send ack back;
+    // DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT; //Set DATA to OUTPUT
+    // delay(tokenProtocolDelay);
+    // DATAPIN_TOP_WRITE_REG |= 1UL << DATAPIN_TOP_WRITE; // set BB2 to High;
+    // delay(2 * tokenProtocolDelay);
+
+    // DATAPIN_TOP_OUTPUT_REG &= ~(1UL << DATAPIN_TOP_OUTPUT); //SET DATA to INput
+    // delay(2* tokenProtocolDelay);
+
     sei();
-
-    if (debug)
-    {
-        if (_isBase)
-        {
-            delay(100);
-
-            String text = "Start Receiving";
-            _radio->write(text.c_str(), strlen(text.c_str()));
-
-            delay(100);
-        }
-    }
 }
 
 //Main loop of the state
 void ReceivingState::on_execute()
 {
+
 }
 
 //Handels events when received
@@ -91,7 +87,6 @@ void ReceivingState::on_event(Event e)
                     receivedText2[len] = buffer;
                     receivedText2[len + 1] = '\0';
 
-                    receivedText += buffer;
                     ackHigh = true;
                 }
                 else
@@ -99,8 +94,12 @@ void ReceivingState::on_event(Event e)
                     ackHigh = false;
                     if (_isBase)
                     {
-                        String text = "Wrong bit";
-                        _radio->write(text.c_str(), strlen(text.c_str()));
+                        // String text = "Start receiving2";
+                        // bool done = false;
+                        // while (!done)
+                        // {
+                        //     done = _radio->write(text.c_str(), strlen(text.c_str()));
+                        // }
                     }
                 }
             }
@@ -150,7 +149,6 @@ void ReceivingState::on_exit()
     topClockBitNumber = 0;
     amount1bits = 0;
     buffer = 0;
-    receivedText = "";
     hasClockLineRised = false;
     sendAck = false;
 }

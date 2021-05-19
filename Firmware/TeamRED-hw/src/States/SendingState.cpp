@@ -159,9 +159,11 @@ void SendingState::on_execute()
         {
             currentChar++;
             tries = 0;
-        }else {
+        }
+        else
+        {
             tries++;
-            if(tries > FAILEDAMOUNT)
+            if (tries > FAILEDAMOUNT)
             {
                 _statemachine->setState(StateNumber::Error);
                 return;
@@ -181,9 +183,9 @@ void SendingState::on_execute()
         if (currentChar >= strlen(tokencode))
         {
             //End bit
-            _delay_ms(100);
+            _delay_ms(20);
             DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET PA4 to high
-            _delay_ms(100);
+            _delay_ms(20);
             DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 
@@ -212,6 +214,12 @@ void SendingState::on_event(Event e)
 
 void SendingState::on_exit()
 {
+    if (!_isBase)
+    {
+        //DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT);   //Turn PA4 to output
+        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); // Set DATA HIgh
+        CLOCKPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << CLOCKPIN_BOTTOM_OUTPUT); //TUrn PA5 to output
+    }
     PORTA_OUT |= 1UL << 7;
     toSend[0] = '\0';
 }
