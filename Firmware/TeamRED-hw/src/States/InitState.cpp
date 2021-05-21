@@ -24,10 +24,10 @@ void InitState::on_start()
     }
     else
     {
-        PORTB_PIN1CTRL |= PORT_PULLUPEN_bm;
-        PORTB_PIN2CTRL |= PORT_PULLUPEN_bm;
-        PORTB_PIN3CTRL |= PORT_PULLUPEN_bm;
-        PORTA_PIN3CTRL |= PORT_PULLUPEN_bm;
+        // PORTB_PIN1CTRL |= PORT_PULLUPEN_bm;
+        // PORTB_PIN2CTRL |= PORT_PULLUPEN_bm;
+        // PORTB_PIN3CTRL |= PORT_PULLUPEN_bm;
+        // PORTA_PIN3CTRL |= PORT_PULLUPEN_bm;
         _statemachine->setState(StateNumber::SENDING);
     }
 }

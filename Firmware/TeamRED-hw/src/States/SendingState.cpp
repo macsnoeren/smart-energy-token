@@ -14,7 +14,7 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 
     toSend[0] = '\0';
 
-    delay(200);
+    _delay_ms(200);
 }
 
 void SendingState::on_start()
@@ -24,22 +24,21 @@ void SendingState::on_start()
     currentChar = 0;
     tries = 0;
 
-    PORTA_OUT &= ~(1UL << 7);
+    test = false;
 
     if (!_isBase)
     {
-        delay(400);
-
         DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;   //Turn PA4 to output
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
 
-        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set PA5 to high
+        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set clock to high
+        DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE;   //Set data to high
 
         _delay_ms(tokenProtocolDelay);
 
         CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
 
-        delay(40);
+        _delay_ms(60);
     }
 }
 
@@ -52,7 +51,7 @@ void SendingState::on_execute()
         strcat(buildingcode, getSerialNumber());
         strcat(buildingcode, toSend);
 
-        delay(10);
+        _delay_ms(10);
 
         char delim[] = ",";
         char *ptr = strtok(buildingcode, delim);
@@ -93,10 +92,15 @@ void SendingState::on_execute()
     }
     else
     {
+        _delay_ms(10);
+        if (test)
+        {
+            strcpy(toSend, "test");
+        }
         char tokencode[128] = "";
+        strcat(tokencode, getSerialNumber());
         strcat(tokencode, toSend);
-        strcpy(tokencode, getSerialNumber());
-        delay(10);
+        _delay_ms(10);
         char character = tokencode[currentChar];
         uint8_t amount1bits = 0;
         for (uint8_t j = 0; j < 7; j++)
@@ -183,9 +187,9 @@ void SendingState::on_execute()
         if (currentChar >= strlen(tokencode))
         {
             //End bit
-            _delay_ms(20);
+            _delay_ms(40);
             DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET PA4 to high
-            _delay_ms(20);
+            _delay_ms(40);
             DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 
@@ -203,8 +207,8 @@ void SendingState::on_event(Event e)
     switch (e.name)
     {
     case EventName::SendData:
-        size_t sz = strlen(toSend);
         strcpy(toSend, e.eventData);
+        size_t sz = strlen(toSend);
         break;
 
     default:
@@ -214,12 +218,13 @@ void SendingState::on_event(Event e)
 
 void SendingState::on_exit()
 {
+    toSend[0] = '\0';
+
     if (!_isBase)
     {
         //DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT);   //Turn PA4 to output
-        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); // Set DATA HIgh
+        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE);         // Set DATA HIgh
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << CLOCKPIN_BOTTOM_OUTPUT); //TUrn PA5 to output
     }
     PORTA_OUT |= 1UL << 7;
-    toSend[0] = '\0';
 }

@@ -12,12 +12,12 @@ void RemovedTopState::on_init(Statemachine *statemachine, RF24 *radio, bool isBa
 void RemovedTopState::on_start()
 {
     _statemachine->hasTopToken = false;
-    _statemachine->setState(StateNumber::SENDING);
 }
 
 //Main loop of the state
 void RemovedTopState::on_execute()
 {
+    _statemachine->setState(StateNumber::SENDING);
 }
 
 //Handels events when received

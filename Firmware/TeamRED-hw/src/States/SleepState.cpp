@@ -2,6 +2,7 @@
 #include <avr/sleep.h>
 #include "Settings.h"
 #include "Statemachine.h"
+#include <util/delay.h>
 
 void SleepState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 {
@@ -27,26 +28,32 @@ void SleepState::on_start()
 
     sei();
 
+    _delay_ms(20);
+
     hasStarted = false;
     hasReceivedRemovedTop = false;
     hasReceivedDataStart = false;
 
-    if (!_isBase)
-    {
-        delay(2000);
-    }
+    blinkTime = millis();
 }
 
 //Main loop of the state
 void SleepState::on_execute()
 {
-    PORTA_OUT |= 1UL << 7;
+    // long current = millis();
+    // if(current - blinkTime >= 1000)
+    // {
+    //     PORTA_OUT ^= 1UL << 7; //toggle light
+    //     blinkTime = current;
+    // }
 
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    // PORTA_OUT |= 1UL << 7;
 
-    sleep_enable();
+    // set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
-    sleep_mode();
+    // sleep_enable();
+
+    // sleep_mode();
 
     if (hasReceivedRemovedTop)
     {
@@ -82,6 +89,7 @@ void SleepState::on_event(Event e)
 
 void SleepState::on_exit()
 {
+    _delay_ms(20);
     sleep_disable();
 
     //disable interrupts

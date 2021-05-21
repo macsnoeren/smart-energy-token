@@ -15,6 +15,7 @@ private:
     bool _isBase;
 
     long blinkTime;
+    long startTime;
 
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);

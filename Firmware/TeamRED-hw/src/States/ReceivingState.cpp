@@ -22,11 +22,11 @@ void ReceivingState::on_start()
 
     PORTA_OUT &= ~(1UL << 7);
 
-    CLOCKPIN_TOP_INTERRUPT_REG |= 1UL << CLOCKPIN_TOP_INTERRUPT; //Enale intterrupt
+    CLOCKPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << CLOCKPIN_TOP_INTERRUPT; //Enale intterrupt
 
-    DATAPIN_TOP_INTERRUPT_REG |= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
+    DATAPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
 
-    //PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
+    PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
     PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor for PA4
 
     // //Send ack back;
@@ -71,13 +71,11 @@ void ReceivingState::on_event(Event e)
                 if ((DATAPIN_TOP_READ_REG >> DATAPIN_TOP_READ) & 1) // read PB2 (Datapint)
                 {
                     buffer |= 1UL << (6 - topClockBitNumber); //Write 1
-                    binary[topClockBitNumber] = '1';
                     amount1bits++;
                 }
                 else
                 {
                     buffer &= ~(1UL << (6 - topClockBitNumber)); //Write 0
-                    binary[topClockBitNumber] = '0';
                 }
                 topClockBitNumber++;
             }
@@ -129,12 +127,14 @@ void ReceivingState::on_event(Event e)
     case EventName::ReceivedTopDataRisingInterrupt:
         if (hasClockLineRised && topClockBitNumber == 0 && strlen(receivedText2) > 9)
         {
+            PORTA_OUT |= 1UL << 7;
 
             Event e{
                 EventName::SendData,
                 receivedText2};
 
             _statemachine->setState(StateNumber::SENDING);
+
             _statemachine->handle_event(e);
         }
     default:
@@ -144,11 +144,20 @@ void ReceivingState::on_event(Event e)
 
 void ReceivingState::on_exit()
 {
+    
+
+    CLOCKPIN_TOP_INTERRUPT_REG &= ~(1UL << CLOCKPIN_TOP_INTERRUPT); //Enale intterrupt
+
+    DATAPIN_TOP_INTERRUPT_REG &= ~(1UL << DATAPIN_TOP_INTERRUPT); //Enable intterrupt
+
+    PORTA_PIN5CTRL &= ~(1UL << 3); //enable pullup resitor
+    PORTA_PIN4CTRL &= ~(1UL << 3); //enable pullup resitor
+
     PORTA_OUT |= 1UL << 7;
 
-    topClockBitNumber = 0;
-    amount1bits = 0;
-    buffer = 0;
-    hasClockLineRised = false;
-    sendAck = false;
+    // topClockBitNumber = 0;
+    // amount1bits = 0;
+    // buffer = 0;
+    // hasClockLineRised = false;
+    // sendAck = false;
 }

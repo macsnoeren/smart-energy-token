@@ -20,7 +20,7 @@ private:
 
     char buffer;
     uint8_t amount1bits;
-    char receivedText2[256];
+    char receivedText2[128];
     char binary[10];
 
     bool sendAck;

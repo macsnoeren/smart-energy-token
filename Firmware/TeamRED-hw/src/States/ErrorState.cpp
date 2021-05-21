@@ -14,6 +14,7 @@ void ErrorState::on_start()
     _statemachine->hasTopToken = false;
 
     blinkTime = millis();    
+    startTime = millis();
 }
 
 //Main loop of the state
@@ -24,6 +25,11 @@ void ErrorState::on_execute()
     {
         PORTA_OUT ^= 1UL << 7; //toggle light
         blinkTime = current;
+    }
+
+    if(current - startTime >= 20000)
+    {
+        _statemachine->setState(StateNumber::INIT);
     }
 }
 

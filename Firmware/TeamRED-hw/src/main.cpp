@@ -2,7 +2,6 @@
 #include <RF24.h>
 #include "statemachine.h"
 #include "Interrupt.h"
-#include "Serialnumber.h"
 
 Statemachine machine;
 RF24 radio(4, 5); //radio variable

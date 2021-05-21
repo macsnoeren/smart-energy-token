@@ -36,10 +36,27 @@ void Statemachine::on_init(RF24 *radio)
     PORTA_OUT |= 1UL << 7;
 
     initState.on_start();
+
+    blinkTime = millis();
 }
 
 void Statemachine::on_execute()
 {
+    // bool doneWriting = false;
+    // char number[20] = "";
+    // sprintf(number, "%i", (int)currentState);
+
+    // while (!doneWriting)
+    // {
+    //     doneWriting = _radio->write(number, strlen(number));
+    // }
+
+    long current = millis();
+    if (current - blinkTime >= 500 && currentState == StateNumber::SLEEP)
+    {
+        PORTA_OUT ^= 1UL << 7; //toggle light
+        blinkTime = current;
+    }
     switch (currentState)
     {
     case StateNumber::INIT:

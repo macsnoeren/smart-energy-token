@@ -45,6 +45,8 @@ public:
     Statemachine();
     ~Statemachine();
 
+    long blinkTime;
+
     InitState initState;
     ReceivingState receivingState;
     SleepState sleepState;

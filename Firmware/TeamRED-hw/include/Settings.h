@@ -1,5 +1,5 @@
 const bool debug = false;
-const double tokenProtocolDelay = 0.5;
+const double tokenProtocolDelay = 2;
 
 #define DATAPIN_TOP_READ 5
 #define DATAPIN_TOP_READ_REG PORTA_IN
