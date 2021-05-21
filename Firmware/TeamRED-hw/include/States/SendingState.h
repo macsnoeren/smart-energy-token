@@ -18,9 +18,6 @@ private:
     uint8_t currentChar;
     bool waitingForAck;
     uint8_t tries;
-
-    bool test;
-
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);
     void on_start();

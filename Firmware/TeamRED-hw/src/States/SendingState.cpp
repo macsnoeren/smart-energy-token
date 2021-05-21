@@ -24,8 +24,6 @@ void SendingState::on_start()
     currentChar = 0;
     tries = 0;
 
-    test = false;
-
     if (!_isBase)
     {
         DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;   //Turn PA4 to output
@@ -38,7 +36,7 @@ void SendingState::on_start()
 
         CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
 
-        _delay_ms(20);
+        _delay_ms(60);
     }
 }
 
@@ -92,15 +90,10 @@ void SendingState::on_execute()
     }
     else
     {
-        _delay_ms(10);
-        if (test)
-        {
-            strcpy(toSend, "test");
-        }
         char tokencode[128] = "";
         strcat(tokencode, getSerialNumber());
         strcat(tokencode, toSend);
-        _delay_ms(10);
+        _delay_ms(tokenProtocolDelay);
         char character = tokencode[currentChar];
         uint8_t amount1bits = 0;
         for (uint8_t j = 0; j < 7; j++)
@@ -187,9 +180,9 @@ void SendingState::on_execute()
         if (currentChar >= strlen(tokencode))
         {
             //End bit
-            _delay_ms(40);
+            _delay_ms(tokenProtocolDelay);
             DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET PA4 to high
-            _delay_ms(40);
+            _delay_ms(tokenProtocolDelay);
             DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 
