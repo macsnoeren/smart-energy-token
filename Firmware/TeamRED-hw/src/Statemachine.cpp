@@ -5,6 +5,7 @@
 #include "States/RemovedTopState.h"
 #include "States/SendingState.h"
 #include "States/ErrorState.h"
+#include <util/delay.h>
 
 void Statemachine::on_init(RF24 *radio)
 {
@@ -19,6 +20,7 @@ void Statemachine::on_init(RF24 *radio)
     else
     {
         SPI.end();
+        _delay_ms(400);
     }
 
     hasTopToken = false;
@@ -38,18 +40,21 @@ void Statemachine::on_init(RF24 *radio)
     initState.on_start();
 
     blinkTime = millis();
+    resetStartTime = millis();
 }
 
 void Statemachine::on_execute()
 {
-    // bool doneWriting = false;
-    // char number[20] = "";
-    // sprintf(number, "%i", (int)currentState);
-
-    // while (!doneWriting)
-    // {
-    //     doneWriting = _radio->write(number, strlen(number));
-    // }
+    if (!(currentState == StateNumber::Error || currentState == StateNumber::SLEEP))
+    {
+        //Check if the state is stuck
+        long current = millis();
+        if (current - resetStartTime >= 20000)
+        {
+            setState(StateNumber::Error);
+            return;
+        }
+    }
 
     long current = millis();
     if (current - blinkTime >= 500 && currentState == StateNumber::SLEEP)
@@ -118,6 +123,8 @@ void Statemachine::handle_event(Event e)
 
 void Statemachine::setState(StateNumber newState)
 {
+    resetStartTime = millis();
+
     switch (currentState)
     {
     case StateNumber::INIT:

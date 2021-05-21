@@ -47,6 +47,8 @@ public:
 
     long blinkTime;
 
+    long resetStartTime;
+
     InitState initState;
     ReceivingState receivingState;
     SleepState sleepState;
