@@ -12,53 +12,50 @@ ISR(PORTA_PORT_vect)
     PORTA_OUT |= 1UL << 7;
 
     bool isPA4 = (PORTA_IN >> 4) & 1;
+    bool isPB2 = (PORTA_IN >> 5) & 1;
     if (isPA4 && !prevTopClock)
     {
-        PORTA_INTFLAGS |= 1UL << 4;
-        String empty = "";
+        prevTopClock = isPA4;
         Event e = {
             EventName::ReceivedTopClockRisingInterrupt,
-            &empty[0]};
+            NULL};
 
         statemachine->handle_event(e);
+        PORTA_INTFLAGS |= 1UL << 4;
+        return;
     }
     else if (!isPA4 && prevTopClock)
     {
+        prevTopClock = isPA4;
         PORTA_INTFLAGS |= 1UL << 4;
-        String empty = "";
-
         Event e = {
             EventName::ReceivedTopClockFallingInterrupt,
-            &empty[0]};
+            NULL};
         statemachine->handle_event(e);
+        return;
     }
-    prevTopClock = isPA4;
-
-    bool isPB2 = (PORTA_IN >> 5) & 1;
-    if (prevTopData && !isPB2) //detect topdata falling
+    else if (prevTopData && !isPB2) //detect topdata falling
     {
-        PORTA_INTFLAGS |= 1UL << 5; //reset interrupt flag
-        String empty = "";
+        prevTopData = isPB2;
         PORTA_OUT &= ~(1UL << 7);
 
         Event e = {
             EventName::ReceivedTopDataFallingInterrupt,
-            &empty[0]};
+            NULL};
         statemachine->handle_event(e);
+        PORTA_INTFLAGS |= 1UL << 5; //reset interrupt flag
+        return;
     }
     else if (!prevTopData && isPB2) // detect topdata rising
     {
-        PORTA_INTFLAGS |= 1UL << 5;
-
-        String empty = "";
-
+        prevTopData = isPB2;
         Event e = {
             EventName::ReceivedTopDataRisingInterrupt,
-            &empty[0]};
+            NULL};
         statemachine->handle_event(e);
+        PORTA_INTFLAGS |= 1UL << 5;
+        return;
     }
-
-    prevTopData = isPB2;
 }
 
 void Interrupt::setStatemachine(Statemachine *_statemachine)
