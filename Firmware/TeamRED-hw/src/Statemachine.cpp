@@ -2,16 +2,18 @@
 #include "States/InitState.h"
 #include "States/ReceivingState.h"
 #include "States/SleepState.h"
-#include "States/RemovedTopState.h"
 #include "States/SendingState.h"
 #include "States/ErrorState.h"
 #include <util/delay.h>
 
 void Statemachine::on_init(RF24 *radio)
 {
+    PORTA_OUT &= ~(1UL << 7);
+    _delay_ms(200);
     //Init radio before everything cause everystate needs the radio for debugging
     const byte address[6] = "test1";
     isBase = radio->begin(); //check if radio is connected
+    isBase = radio->isChipConnected();
     if (isBase)
     {
         radio->openWritingPipe(address); //Set the radio writing addres
@@ -19,6 +21,7 @@ void Statemachine::on_init(RF24 *radio)
     }
     else
     {
+        PORTA_OUT &= ~(1UL << 7);
         SPI.end();
         _delay_ms(400);
     }
@@ -32,7 +35,6 @@ void Statemachine::on_init(RF24 *radio)
     receivingState.on_init(this, radio, isBase);
     sleepState.on_init(this, radio, isBase);
     sendingState.on_init(this, radio, isBase);
-    removedTopState.on_init(this, radio, isBase);
     errorState.on_init(this, radio, isBase);
 
     PORTA_OUT |= 1UL << 7;
@@ -67,9 +69,6 @@ void Statemachine::on_execute()
     case StateNumber::INIT:
         initState.on_execute();
         break;
-    case StateNumber::REMOVEDTOP:
-        removedTopState.on_execute();
-        break;
     case StateNumber::RECEIVING:
         receivingState.on_execute();
         break;
@@ -101,9 +100,6 @@ void Statemachine::handle_event(Event e)
     case StateNumber::INIT:
         initState.on_event(e);
         break;
-    case StateNumber::REMOVEDTOP:
-        removedTopState.on_event(e);
-        break;
     case StateNumber::RECEIVING:
         receivingState.on_event(e);
         break;
@@ -125,13 +121,18 @@ void Statemachine::setState(StateNumber newState)
 {
     resetStartTime = millis();
 
+    if (isBase)
+    {
+        char test[20] = "";
+        sprintf(test, "%i-%i", (int)currentState, (int)newState);
+        bool isDone = false;
+        _radio->write(test, strlen(test));
+    }
+
     switch (currentState)
     {
     case StateNumber::INIT:
         initState.on_exit();
-        break;
-    case StateNumber::REMOVEDTOP:
-        removedTopState.on_exit();
         break;
     case StateNumber::RECEIVING:
         receivingState.on_exit();
@@ -157,9 +158,6 @@ void Statemachine::setState(StateNumber newState)
     case StateNumber::INIT:
         initState.on_start();
         break;
-    case StateNumber::REMOVEDTOP:
-        removedTopState.on_start();
-        break;
     case StateNumber::RECEIVING:
         receivingState.on_start();
         break;
@@ -176,6 +174,12 @@ void Statemachine::setState(StateNumber newState)
     default:
         break;
     }
+
+    // if (isBase)
+    // {
+    //     char test[20] = "done move";
+    //     _radio->write(test, strlen(test));
+    // }
 }
 
 Statemachine::Statemachine()

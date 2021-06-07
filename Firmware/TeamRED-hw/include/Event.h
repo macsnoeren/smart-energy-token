@@ -9,6 +9,7 @@ enum EventName {
     ReceivedTopDataRisingInterrupt,
     ReceivedTopDataFallingInterrupt,
     SendData,
+    ErrorInterrupt
 };
 
 struct Event

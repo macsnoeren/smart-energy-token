@@ -15,6 +15,9 @@ private:
     bool _isBase;
 
     char toSend[128];
+    char buildingcode[128];
+    const char * dot = ".";
+    const char * delim = ",";
     uint8_t currentChar;
     bool waitingForAck;
     uint8_t tries;

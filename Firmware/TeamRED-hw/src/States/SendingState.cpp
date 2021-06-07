@@ -13,8 +13,6 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
     _isBase = isBase;
 
     toSend[0] = '\0';
-
-    _delay_ms(200);
 }
 
 void SendingState::on_start()
@@ -45,13 +43,12 @@ void SendingState::on_execute()
 {
     if (_isBase)
     {
-        char buildingcode[128] = "";
+        buildingcode[0] = '\0';
         strcat(buildingcode, getSerialNumber());
         strcat(buildingcode, toSend);
 
         _delay_ms(10);
 
-        char delim[] = ",";
         char *ptr = strtok(buildingcode, delim);
 
         while (ptr != NULL)
@@ -64,24 +61,21 @@ void SendingState::on_execute()
                 loop++;
                 if (loop >= FAILEDAMOUNT)
                 {
-                    _statemachine->setState(StateNumber::Error);
-                    return;
+                    doneWriting = true;
                 }
             }
             ptr = strtok(NULL, delim);
         }
 
-        char end[10] = ".";
         bool doneWriting = false;
         uint8_t loop = 0;
         while (!doneWriting)
         {
-            doneWriting = _radio->write(end, strlen(end));
+            doneWriting = _radio->write(dot, strlen(dot));
             loop++;
             if (loop >= FAILEDAMOUNT)
             {
-                _statemachine->setState(StateNumber::Error);
-                return;
+                doneWriting = true ;
             }
         }
 
@@ -90,11 +84,12 @@ void SendingState::on_execute()
     }
     else
     {
-        char tokencode[128] = "";
-        strcat(tokencode, getSerialNumber());
-        strcat(tokencode, toSend);
+        buildingcode[0] = '\0';
+
+        strcat(buildingcode, getSerialNumber());
+        strcat(buildingcode, toSend);
         _delay_ms(tokenProtocolDelay);
-        char character = tokencode[currentChar];
+        char character = buildingcode[currentChar];
         uint8_t amount1bits = 0;
         for (uint8_t j = 0; j < 7; j++)
         {
@@ -177,7 +172,7 @@ void SendingState::on_execute()
         DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
         _delay_ms(tokenProtocolDelay);
 
-        if (currentChar >= strlen(tokencode))
+        if (currentChar >= strlen(buildingcode))
         {
             //End bit
             _delay_ms(tokenProtocolDelay);

@@ -3,7 +3,6 @@
 
 #include "States/InitState.h"
 #include "States/ReceivingState.h"
-#include "States/RemovedTopState.h"
 #include "States/SendingState.h"
 #include "States/SleepState.h"
 #include "States/ErrorState.h"
@@ -20,7 +19,6 @@ enum StateNumber
     SENDING,
     RECEIVING,
     SLEEP,
-    REMOVEDTOP,
     Error
 };
 
@@ -30,12 +28,13 @@ class Statemachine
 {
 private:
     static Statemachine *_instance;
-    RF24 *_radio;
 
-    StateNumber currentState;
     bool isBase;
 
 public:
+    RF24 *_radio;
+    volatile StateNumber currentState;
+
     void on_init(RF24 *radio);
     void on_execute();
     void handle_event(Event e);
@@ -52,11 +51,10 @@ public:
     InitState initState;
     ReceivingState receivingState;
     SleepState sleepState;
-    RemovedTopState removedTopState;
     SendingState sendingState;
     ErrorState errorState;
 
-    bool hasTopToken;
+    volatile bool hasTopToken;
     String codes;
 };
 
