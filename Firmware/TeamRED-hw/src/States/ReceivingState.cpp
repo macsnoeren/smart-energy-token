@@ -1,6 +1,8 @@
 #include "States/ReceivingState.h"
 #include "Settings.h"
 #include "Statemachine.h"
+#include <util/delay.h>
+
 
 void ReceivingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 {
@@ -11,6 +13,8 @@ void ReceivingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBas
 
 void ReceivingState::on_start()
 {
+    PORTA_OUT &= ~(1UL << 7);
+
     // init all variables that need to be reset when the state enters
     topClockBitNumber = 0;
     amount1bits = 0;
@@ -20,11 +24,8 @@ void ReceivingState::on_start()
     sendAck = false;
     receivedText2[0] = '\0';
 
-    PORTA_OUT &= ~(1UL << 7);
-
     CLOCKPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << CLOCKPIN_TOP_INTERRUPT; //Enale intterrupt
-
-    DATAPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
+    DATAPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc;  //|= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
 
     PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
     PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor for PA4
@@ -39,6 +40,7 @@ void ReceivingState::on_start()
     // delay(2* tokenProtocolDelay);
 
     sei();
+    
 }
 
 //Main loop of the state
@@ -144,7 +146,6 @@ void ReceivingState::on_event(Event e)
 
 void ReceivingState::on_exit()
 {
-    
 
     CLOCKPIN_TOP_INTERRUPT_REG &= ~(1UL << CLOCKPIN_TOP_INTERRUPT); //Enale intterrupt
 

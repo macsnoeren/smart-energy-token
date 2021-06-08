@@ -5,9 +5,12 @@
 #include "States/SendingState.h"
 #include "States/ErrorState.h"
 #include <util/delay.h>
+#include <avr/wdt.h>
 
 void Statemachine::on_init(RF24 *radio)
 {
+    hasTopToken = !((PORTA_IN >> 5) & 1);
+
     PORTA_OUT &= ~(1UL << 7);
     _delay_ms(200);
     //Init radio before everything cause everystate needs the radio for debugging
@@ -47,6 +50,10 @@ void Statemachine::on_init(RF24 *radio)
 
 void Statemachine::on_execute()
 {
+    if (isBase)
+    {
+        wdt_reset();
+    }
     if (!(currentState == StateNumber::Error || currentState == StateNumber::SLEEP))
     {
         //Check if the state is stuck
@@ -58,12 +65,12 @@ void Statemachine::on_execute()
         }
     }
 
-    long current = millis();
-    if (current - blinkTime >= 500 && currentState == StateNumber::SLEEP)
-    {
-        PORTA_OUT ^= 1UL << 7; //toggle light
-        blinkTime = current;
-    }
+    // long current = millis();
+    // if (current - blinkTime >= 500 && currentState == StateNumber::SLEEP)
+    // {
+    //     PORTA_OUT ^= 1UL << 7; //toggle light
+    //     blinkTime = current;
+    // }
     switch (currentState)
     {
     case StateNumber::INIT:
@@ -121,13 +128,13 @@ void Statemachine::setState(StateNumber newState)
 {
     resetStartTime = millis();
 
-    if (isBase)
-    {
-        char test[20] = "";
-        sprintf(test, "%i-%i", (int)currentState, (int)newState);
-        bool isDone = false;
-        _radio->write(test, strlen(test));
-    }
+    // if (isBase)
+    // {
+    //     char test[20] = "";
+    //     sprintf(test, "%i-%i", (int)currentState, (int)newState);
+    //     bool isDone = false;
+    //     _radio->write(test, strlen(test));
+    // }
 
     switch (currentState)
     {

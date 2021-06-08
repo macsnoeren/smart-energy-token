@@ -11,9 +11,7 @@ Statemachine *statemachine;
 
 ISR(RTC_PIT_vect)
 {
-    RTC_PITINTFLAGS = RTC_PI_bm;
-    // PORTA_OUT &= ~(1UL << 7);
-    // _delay_ms(1000);
+    RTC_PITINTFLAGS = 0xFF;
 }
 
 ISR(PORTA_PORT_vect)

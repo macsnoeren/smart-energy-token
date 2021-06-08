@@ -24,7 +24,6 @@ void SendingState::on_start()
 
     if (!_isBase)
     {
-        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;   //Turn PA4 to output
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
 
         CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set clock to high
@@ -34,7 +33,9 @@ void SendingState::on_start()
 
         CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
 
-        _delay_ms(60);
+        _delay_ms(40);
+
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output
     }
 }
 
@@ -46,8 +47,6 @@ void SendingState::on_execute()
         buildingcode[0] = '\0';
         strcat(buildingcode, getSerialNumber());
         strcat(buildingcode, toSend);
-
-        _delay_ms(10);
 
         char *ptr = strtok(buildingcode, delim);
 
@@ -75,7 +74,7 @@ void SendingState::on_execute()
             loop++;
             if (loop >= FAILEDAMOUNT)
             {
-                doneWriting = true ;
+                doneWriting = true;
             }
         }
 

@@ -5,6 +5,7 @@ static char serialnumber[64];
 
 static char *getSerialNumber()
 {
+    serialnumber[0] = '\0';
     // byte test0 = SIGROW_SERNUM0;
     // byte test1 = SIGROW_SERNUM1;
     // char test2 = SIGROW_SERNUM2;

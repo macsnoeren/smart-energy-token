@@ -3,6 +3,7 @@
 #include "Settings.h"
 #include "Statemachine.h"
 #include <util/delay.h>
+#include <avr/wdt.h>
 
 void SleepState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 {
@@ -51,6 +52,11 @@ void SleepState::on_execute()
 {
     PORTA_OUT |= 1UL << 7;
 
+    if (_isBase)
+    {
+        wdt_disable();
+    }
+
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
     sleep_mode();
@@ -59,6 +65,11 @@ void SleepState::on_execute()
 
     PORTA_OUT &= ~(1UL << 7);
     _delay_ms(1);
+
+    if (_isBase)
+    {
+        wdt_enable(WDTO_2S);
+    }
 }
 
 //Handels events when received
@@ -84,8 +95,6 @@ void SleepState::on_event(Event e)
     switch (e.name)
     {
     case EventName::ReceivedTopDataRisingInterrupt:
-    case EventName::ReceivedTopDataFallingInterrupt:
-    case EventName::ReceivedTopClockRisingInterrupt:
     case EventName::ErrorInterrupt:
         if (_statemachine->hasTopToken)
         {
@@ -103,7 +112,7 @@ void SleepState::on_event(Event e)
 
 void SleepState::on_exit()
 {
-    if (_isBase)
+    if (!_isBase)
     {
         //Turn of Period timer interval
         RTC_PITINTCTRL = 0x00;
@@ -111,10 +120,10 @@ void SleepState::on_exit()
 
     //disable interrupts
     CLOCKPIN_TOP_INTERRUPT_REG &= ~(1UL << CLOCKPIN_TOP_INTERRUPT); //Enale intterrupt
-    DATAPIN_TOP_INTERRUPT_REG &= ~(1UL << DATAPIN_TOP_INTERRUPT); //Enable intterrupt
+    DATAPIN_TOP_INTERRUPT_REG &= ~(1UL << DATAPIN_TOP_INTERRUPT);   //Enable intterrupt
 
-    PORTA_PIN5CTRL &= ~(1UL << 3); //disable pullup resitor
-    PORTA_PIN4CTRL &= ~(1UL << 3); //diable pullup resitor
+    // PORTA_PIN5CTRL &= ~(1UL << 3); //disable pullup resitor
+    // PORTA_PIN4CTRL &= ~(1UL << 3); //diable pullup resitor
 
     cli();
 }
