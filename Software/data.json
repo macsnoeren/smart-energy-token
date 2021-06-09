@@ -10,6 +10,11 @@
       "technologyGroup":"Solar panel",
       "type" : "TFPV",
       "serial_numbers" : ["304238344F3276BB2B0D"]
+    },
+    {
+      "technologyGroup" : "Battery",
+      "type" : "BAT1",
+      "serial_numbers" : ["304238344F329614122E"]
     }
   ]
 }

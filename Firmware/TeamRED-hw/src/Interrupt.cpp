@@ -16,38 +16,30 @@ ISR(RTC_PIT_vect)
 
 ISR(PORTA_PORT_vect)
 {
-    PORTA_OUT &= ~(1UL << 7);
-
-    bool isPB2 = (PORTA_IN >> 5) & 1;
-    bool isPA4 = (PORTA_IN >> 4) & 1;
-
-    // if (statemachine->currentState == StateNumber::SLEEP)
-    // {
-    //     char test[10] = "testing";
-    //     statemachine->_radio->write(test, strlen(test));
-    // }
+    bool isTopClock = (PORTA_IN >> 5) & 1;
+    bool isTopData = (PORTA_IN >> 4) & 1;
 
     PORTA_OUT |= 1UL << 7;
-    if (isPA4 && !prevTopClock)
+    if (isTopData && !prevTopClock)
     {
-        prevTopClock = isPA4;
+        prevTopClock = isTopData;
         Event e = {
             EventName::ReceivedTopClockRisingInterrupt,
             NULL};
 
         statemachine->handle_event(e);
     }
-    else if (!isPA4 && prevTopClock)
+    else if (!isTopData && prevTopClock)
     {
-        prevTopClock = isPA4;
+        prevTopClock = isTopData;
         Event e = {
             EventName::ReceivedTopClockFallingInterrupt,
             NULL};
         statemachine->handle_event(e);
     }
-    else if (prevTopData && !isPB2) //detect topdata falling
+    else if (prevTopData && !isTopClock) //detect topdata falling
     {
-        prevTopData = isPB2;
+        prevTopData = isTopClock;
         PORTA_OUT &= ~(1UL << 7);
 
         Event e = {
@@ -55,9 +47,9 @@ ISR(PORTA_PORT_vect)
             NULL};
         statemachine->handle_event(e);
     }
-    else if (!prevTopData && isPB2) // detect topdata rising
+    else if (!prevTopData && isTopClock) // detect topdata rising
     {
-        prevTopData = isPB2;
+        prevTopData = isTopClock;
         Event e = {
             EventName::ReceivedTopDataRisingInterrupt,
             NULL};

@@ -3,7 +3,7 @@ import io
 import json
 import requests
 
-gateway = serial.Serial("COM5", 9600, timeout=1)
+gateway = serial.Serial("COM3", 9600, timeout=1)
 
 
 with open('data.json') as f:
@@ -23,6 +23,7 @@ while(True):
 
         if line != ".":
             serialNumbers.append(line)
+            print(line)
         else:
             isBuilding: bool = True
             building = {}

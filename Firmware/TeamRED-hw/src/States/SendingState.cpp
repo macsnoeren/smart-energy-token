@@ -24,16 +24,44 @@ void SendingState::on_start()
 
     if (!_isBase)
     {
-        CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn PA5 to output
+        CLOCKPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << CLOCKPIN_BOTTOM_OUTPUT; //TUrn CLOCK to output
 
-        CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set clock to high
-        // DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE;   //Set data to high
+        bool isDone = false;
+        uint8_t count = 0;
 
-        _delay_ms(tokenProtocolDelay);
+        while (!isDone)
+        {
+            //Write start bit
+            CLOCKPIN_BOTTOM_WRITE_REG |= 1UL << CLOCKPIN_BOTTOM_WRITE; //Set clock to high
 
-        CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE); //Set PA5 to LOW Start bit
+            _delay_ms(tokenProtocolDelay);
+            CLOCKPIN_BOTTOM_WRITE_REG &= ~(1UL << CLOCKPIN_BOTTOM_WRITE);     //Set PA5 to LOW Start bit
+            DATAPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << DATAPIN_BOTTOM_OUTPUT); //Turn data to input so no crash
 
-        _delay_ms(40);
+            //Wait and check the value of the ack wich is on the data line
+            _delay_ms(2 * tokenProtocolDelay);
+            isDone = (PORTA_IN >> 1) & 1; //Check the result of the start bit if high go on else repeat;
+
+            //if not done and greater then the failed amount go to the error state
+            if (count >= FAILEDAMOUNT && !isDone)
+            {
+                _statemachine->setState(StateNumber::Error);
+                return;
+            }
+            count++;
+
+            //Wait for a retry if the ack was false
+            if (!isDone)
+            {
+                _delay_ms(1000);
+            }
+        }
+
+        //Wait for some time to switch the data to output
+        _delay_ms(20);
+
+        DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT;  //Set DATA to OUTPUT
+        DATAPIN_TOP_WRITE_REG &= ~(1UL << DATAPIN_TOP_WRITE); // set BB2 to low;
 
         DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT; //Turn PA4 to output
     }
@@ -214,4 +242,4 @@ void SendingState::on_exit()
         CLOCKPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << CLOCKPIN_BOTTOM_OUTPUT); //TUrn PA5 to output
     }
     PORTA_OUT |= 1UL << 7;
-}
+}   

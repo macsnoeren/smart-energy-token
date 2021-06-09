@@ -30,11 +30,10 @@ private:
     static Statemachine *_instance;
 
     bool isBase;
-
-public:
     RF24 *_radio;
     volatile StateNumber currentState;
 
+public:
     void on_init(RF24 *radio);
     void on_execute();
     void handle_event(Event e);
@@ -45,7 +44,6 @@ public:
     ~Statemachine();
 
     long blinkTime;
-
     long resetStartTime;
 
     InitState initState;
@@ -55,7 +53,6 @@ public:
     ErrorState errorState;
 
     volatile bool hasTopToken;
-    String codes;
 };
 
 #endif // STATEMACHINE_H

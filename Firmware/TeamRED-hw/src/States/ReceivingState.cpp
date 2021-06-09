@@ -24,20 +24,21 @@ void ReceivingState::on_start()
     sendAck = false;
     receivedText2[0] = '\0';
 
+    _delay_ms(1 * tokenProtocolDelay);
+
     CLOCKPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc; //|= 1UL << CLOCKPIN_TOP_INTERRUPT; //Enale intterrupt
     DATAPIN_TOP_INTERRUPT_REG |= PORT_ISC_BOTHEDGES_gc;  //|= 1UL << DATAPIN_TOP_INTERRUPT; //Enable intterrupt
 
     PORTA_PIN5CTRL |= 1UL << 3; //enable pullup resitor for PB2
     PORTA_PIN4CTRL |= 1UL << 3; //enable pullup resitor for PA4
 
-    // //Send ack back;
-    // DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT; //Set DATA to OUTPUT
-    // delay(tokenProtocolDelay);
-    // DATAPIN_TOP_WRITE_REG |= 1UL << DATAPIN_TOP_WRITE; // set BB2 to High;
-    // delay(2 * tokenProtocolDelay);
+    //Send ack back;
+    DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT; //Set DATA to OUTPUT
+    DATAPIN_TOP_WRITE_REG |= 1UL << DATAPIN_TOP_WRITE;   // set BB2 to High;
+    _delay_ms(2 * tokenProtocolDelay);
 
-    // DATAPIN_TOP_OUTPUT_REG &= ~(1UL << DATAPIN_TOP_OUTPUT); //SET DATA to INput
-    // delay(2* tokenProtocolDelay);
+    DATAPIN_TOP_OUTPUT_REG &= ~(1UL << DATAPIN_TOP_OUTPUT); //SET DATA to INput
+    _delay_ms(2 * tokenProtocolDelay);
 
     sei();
     

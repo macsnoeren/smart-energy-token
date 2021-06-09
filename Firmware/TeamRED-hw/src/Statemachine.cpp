@@ -5,7 +5,7 @@
 #include "States/SendingState.h"
 #include "States/ErrorState.h"
 #include <util/delay.h>
-#include <avr/wdt.h>
+#include <avr/wdt.h>    
 
 void Statemachine::on_init(RF24 *radio)
 {
@@ -92,11 +92,11 @@ void Statemachine::on_execute()
 
     if (isBase)
     {
-        SPI.end();
-        const byte address[6] = "test1";
-        _radio->begin(); //check if radio is connected
-        _radio->openWritingPipe(address);
-        _radio->stopListening();
+        // SPI.end();
+        // const byte address[6] = "test1";
+        // _radio->begin(); //check if radio is connected
+        // _radio->openWritingPipe(address);
+        // _radio->stopListening();
     }
 }
 

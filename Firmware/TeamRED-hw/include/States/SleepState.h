@@ -14,13 +14,8 @@ private:
     RF24 *_radio;
     bool _isBase;
 
-    bool hasStarted;
-
     volatile bool hasReceivedRemovedTop;
     volatile bool hasReceivedDataStart;
-
-    long blinkTime;
-
 public:
     void on_init(Statemachine* statemachine,RF24* radio,bool isBase);
     void on_start();
