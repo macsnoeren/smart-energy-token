@@ -1,7 +1,7 @@
 {
   "buildings": [
     {
-      "serial_number": "304238344F32D61C4F31",
+      "serial_number": "MEI4NE8y1hxPMSw",
       "building_code": "GMN"
     }
   ],
@@ -9,12 +9,12 @@
     {
       "technologyGroup":"Solar panel",
       "type" : "TFPV",
-      "serial_numbers" : ["304238344F3276BB2B0D"]
+      "serial_numbers" : ["MEI4NE8ylhQSLiw"]
     },
     {
       "technologyGroup" : "Battery",
       "type" : "BAT1",
-      "serial_numbers" : ["304238344F329614122E"]
+      "serial_numbers" : ["MEI4NE8ydrsrDSw"]
     }
   ]
 }

@@ -2,8 +2,10 @@ import serial
 import io
 import json
 import requests
+import time
 
-gateway = serial.Serial("COM3", 9600, timeout=1)
+# if driver doesn't connect https://forum.arduino.cc/t/nanov3-0-rfnano-error/621978
+gateway = serial.Serial("COM4", 9600, timeout=0.1)
 
 
 with open('data.json') as f:
@@ -15,15 +17,19 @@ prevLine: str = ""
 
 serialNumbers = []
 
+start = time.time()
+
 while(True):
     line: str = sio.readline()
-    line = line.replace("\r\n","")
-    if len(line) > 0 and prevLine != line and line != '\r\n':
+    line = line.replace("\r\n", "")
+
+    if len(line) > 0 and prevLine != line and line != '\r\n' and start - time.time() < 1:
+        start = time.time()
         prevLine = line
+        print(line)
 
         if line != ".":
             serialNumbers.append(line)
-            print(line)
         else:
             isBuilding: bool = True
             building = {}
@@ -44,7 +50,7 @@ while(True):
             if len(tokens) == 0 and building != {}:
                 toSend = {
                     "building_code": building.get('building_code'),
-                    "tokens" : []
+                    "tokens": []
                 }
                 print(toSend)
 
@@ -61,7 +67,7 @@ while(True):
                     })
                 toSend = {
                     "building_code": building.get('building_code'),
-                    "tokens" : tokensToSend
+                    "tokens": tokensToSend
                 }
                 print(toSend)
 
@@ -69,8 +75,7 @@ while(True):
                     'http://127.0.0.1:8000/apiv1/tokens/hardware', json=toSend)
                 print(resp.json())
 
-            serialNumbers = [];
-                
+            serialNumbers = []
 
         # tokenValues = line.split(',')
         # isBuilding: bool = True
