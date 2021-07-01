@@ -43,9 +43,6 @@ void SleepState::on_start()
 
     sei();
 
-    hasReceivedRemovedTop = false;
-    hasReceivedDataStart = false;
-
     power_all_disable();
 }
 
@@ -67,6 +64,9 @@ void SleepState::on_execute()
 
     //Enter sleep mode
     sleep_mode();
+
+    // PORTA_OUT &= ~(1UL << 7);
+    // _delay_ms(1);
 
     //if base power the rf24 up and enable watchdog
     if (_isBase)

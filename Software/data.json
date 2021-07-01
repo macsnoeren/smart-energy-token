@@ -3,18 +3,68 @@
     {
       "serial_number": "MEI4NE8y1hxPMSw",
       "building_code": "GMN"
-    }
+    },
+    {
+      "serial_number": "MEI4NE8yFuosZyw",
+      "building_code": "GMZ"
+    },
+    {
+      "serial_number": "MEI4NE8ytiJAMSw",
+      "building_code" :"HLX"
+    },
+    {
+      "serial_number" : "MEI4NE8y9vgiMSw",
+      "building_code" : "VRT"
+    },
+    {
+      "serial_number" : "MEI4NE8ydi5CKiw",
+      "building_code" : "MTX"
+    },
+    {
+      "serial_number" : "MEI4NE8yNqAPQCw",
+      "building_code" : "ATL"
+    },
+    {
+      "serial_number" : "MEI4NE8yFu4dRCw",
+      "building_code" : "FLX"
+    },
+    {
+      "serial_number" : "MEI4NE8yFt8aMiw",
+      "building_code" : "AUD"
+    },
+    {
+      "serial_number" : "MEI4NE8yVkBDMSw",
+      "building_code" : "SCC"
+    },
+    {
+      "serial_number" : "MEI4NE8y1sQoCyw",
+      "building_code" : "MET"
+    },
+    {
+      "serial_number" : "MEI4NE8y9qFCLiw",
+      "building_code" : "LAP"
+    } 
   ],
   "tokens": [
     {
-      "technologyGroup":"Solar panel",
-      "type" : "TFPV",
-      "serial_numbers" : ["MEI4NE8ylhQSLiw"]
+      "technologyGroup": "Solar panel",
+      "type": "TFPV",
+      "serial_numbers": ["MEI4NE8ylhQSLiw","MEI4NE8ydg8qBSw"]
     },
     {
-      "technologyGroup" : "Battery",
-      "type" : "BAT1",
-      "serial_numbers" : ["MEI4NE8ydrsrDSw"]
+      "technologyGroup": "Solar panel",
+      "type": "M_SI",
+      "serial_numbers": ["MEI4NE8ydrsrDSw","MEI4NE8yFicZMiw"]
+    },
+    {
+      "technologyGroup" :"Solar panel",
+      "type" : "P_SI",
+      "serial_numbers" : ["MEI4NE8y1gILLiw"]
+    },
+    {
+      "technologyGroup": "Battery",
+      "type": "BAT1",
+      "serial_numbers": ["MEI4NE8yVjUaYyw"]
     }
   ]
 }

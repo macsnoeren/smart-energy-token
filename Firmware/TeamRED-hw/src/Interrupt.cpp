@@ -11,11 +11,13 @@ Statemachine *statemachine;
 
 ISR(RTC_PIT_vect)
 {
+    //reset rtc vect
     RTC_PITINTFLAGS = 0xFF;
 }
 
 ISR(PORTA_PORT_vect)
 {
+    //read both port values
     bool isTopClock = (PORTA_IN >> 5) & 1;
     bool isTopData = (PORTA_IN >> 4) & 1;
 
