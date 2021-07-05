@@ -8,8 +8,8 @@ enum EventName {
     ReceivedTopClockFallingInterrupt,
     ReceivedTopDataRisingInterrupt,
     ReceivedTopDataFallingInterrupt,
-    SendData,
-    ErrorInterrupt
+    SendData,  // event to send the received data to to be send
+    ErrorInterrupt // event that gets thrown if something goes wrong with interrupt
 };
 
 struct Event

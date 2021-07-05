@@ -18,7 +18,6 @@ void SendingState::on_init(Statemachine *statemachine, RF24 *radio, bool isBase)
 void SendingState::on_start()
 {
     // init all variables that need to be reset when the state enters
-    waitingForAck = false;
     currentChar = 0;
     tries = 0;
 
@@ -53,7 +52,7 @@ void SendingState::on_start()
             //Wait for a retry if the ack was false
             if (!isDone)
             {
-                _delay_ms(1000);
+                _delay_ms(200);
             }
         }
 
@@ -86,13 +85,15 @@ void SendingState::on_execute()
             {
                 doneWriting = _radio->write(ptr, strlen(ptr));
                 loop++;
-                if (loop >= FAILEDAMOUNT)
+                if (loop >= 5)
                 {
                     doneWriting = true;
                 }
             }
             ptr = strtok(NULL, delim);
         }
+
+        _delay_ms(10);
 
         bool doneWriting = false;
         uint8_t loop = 0;
@@ -202,9 +203,9 @@ void SendingState::on_execute()
         if (currentChar >= strlen(buildingcode))
         {
             //End bit
-            _delay_ms(tokenProtocolDelay);
+            _delay_ms(4 * tokenProtocolDelay);
             DATAPIN_BOTTOM_WRITE_REG |= 1UL << DATAPIN_BOTTOM_WRITE; //SET PA4 to high
-            _delay_ms(tokenProtocolDelay);
+            _delay_ms(4 * tokenProtocolDelay);  
             DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); //Set PA4 to LOW
             _delay_ms(tokenProtocolDelay);
 

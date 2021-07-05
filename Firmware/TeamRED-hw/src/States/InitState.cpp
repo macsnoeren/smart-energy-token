@@ -24,8 +24,8 @@ void InitState::on_start()
     }
     else
     {
-        DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT;  //Set DATA to OUTPUT
-        DATAPIN_TOP_WRITE_REG &= ~(1UL << DATAPIN_TOP_WRITE); // set BB2 to low;
+        // DATAPIN_TOP_OUTPUT_REG |= 1UL << DATAPIN_TOP_OUTPUT;  //Set DATA to OUTPUT
+        // DATAPIN_TOP_WRITE_REG &= ~(1UL << DATAPIN_TOP_WRITE); // set BB2 to low;
         // PORTB_PIN1CTRL |= PORT_PULLUPEN_bm;
         // PORTB_PIN2CTRL |= PORT_PULLUPEN_bm;
         // PORTB_PIN3CTRL |= PORT_PULLUPEN_bm;

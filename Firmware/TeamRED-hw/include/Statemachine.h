@@ -29,30 +29,31 @@ class Statemachine
 private:
     static Statemachine *_instance;
 
-    bool isBase;
-    RF24 *_radio;
-    volatile StateNumber currentState;
+    bool isBase;            // boolean if the program is running on a base or token
+    RF24 *_radio;           // radio variable for sending data if it is an base otherwise null
+    volatile StateNumber currentState; // currentState value
 
-public:
-    void on_init(RF24 *radio);
-    void on_execute();
-    void handle_event(Event e);
+    long blinkTime;         // Time since last blink 
+    long resetStartTime;    // Time since last state change
 
-    void setState(StateNumber state);
-
-    Statemachine();
-    ~Statemachine();
-
-    long blinkTime;
-    long resetStartTime;
-
+    //All states defined
     InitState initState;
     ReceivingState receivingState;
     SleepState sleepState;
     SendingState sendingState;
     ErrorState errorState;
 
-    volatile bool hasTopToken;
+public:
+    void on_init(RF24 *radio);      // initalize the statemachine
+    void on_execute();              // function that executes everytime a loop happends
+    void handle_event(Event e);     // function that routes events to the current state
+
+    void setState(StateNumber state);   // function that changes the state
+
+    Statemachine();  
+    ~Statemachine();
+
+    volatile bool hasTopToken;      // bool that stores wheter an token is atop
 };
 
 #endif // STATEMACHINE_H

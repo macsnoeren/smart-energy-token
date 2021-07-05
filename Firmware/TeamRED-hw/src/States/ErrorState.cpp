@@ -13,21 +13,23 @@ void ErrorState::on_start()
 {
     _statemachine->hasTopToken = false;
 
-    blinkTime = millis();    
-    startTime = millis();
+    blinkTime = millis(); //set blinkTime
+    startTime = millis(); //set startTime
 }
 
 //Main loop of the state
 void ErrorState::on_execute()
 {
     long current = millis();
+    //check if 1 sec has elapsed
     if(current - blinkTime >= 1000)
     {
         PORTA_OUT ^= 1UL << 7; //toggle light
         blinkTime = current;
     }
-
-    if(current - startTime >= 20000)
+    
+    // check if 4 sec elapsed after reset
+    if(current - startTime >= 4000)
     {
         _statemachine->setState(StateNumber::INIT);
     }

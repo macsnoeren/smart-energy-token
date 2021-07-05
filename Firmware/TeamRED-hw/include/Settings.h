@@ -1,3 +1,4 @@
+// file with all the defined values
 const bool debug = false;
 const double tokenProtocolDelay = 0.2;
 

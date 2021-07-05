@@ -22,7 +22,17 @@ void ReceivingState::on_start()
     hasClockLineRised = false;
     _statemachine->hasTopToken = true;
     sendAck = false;
-    receivedText2[0] = '\0';
+    receivedText[0] = '\0';
+
+    if(!_isBase)
+    {
+        //CLock bottom to input
+        CLOCKPIN_BOTTOM_PIN_OUTPUT_REG &= ~(1UL << CLOCKPIN_BOTTOM_OUTPUT); // clock to input
+
+        //Dota bottom to low for detecting detatching
+        DATAPIN_BOTTOM_PIN_OUTPUT_REG |= 1UL << DATAPIN_BOTTOM_OUTPUT;
+        DATAPIN_BOTTOM_WRITE_REG &= ~(1UL << DATAPIN_BOTTOM_WRITE); // datapin to low
+    }
 
     _delay_ms(1 * tokenProtocolDelay);
 
@@ -88,9 +98,9 @@ void ReceivingState::on_event(Event e)
                 bool parity = (DATAPIN_TOP_READ_REG >> DATAPIN_TOP_READ) & 1;
                 if (parity == (amount1bits % 2 == 0))
                 {
-                    int len = strlen(receivedText2);
-                    receivedText2[len] = buffer;
-                    receivedText2[len + 1] = '\0';
+                    int len = strlen(receivedText);
+                    receivedText[len] = buffer;
+                    receivedText[len + 1] = '\0';
 
                     ackHigh = true;
                     PORTA_OUT &= ~(1UL << 7);
@@ -128,13 +138,13 @@ void ReceivingState::on_event(Event e)
         break;
 
     case EventName::ReceivedTopDataRisingInterrupt:
-        if (hasClockLineRised && topClockBitNumber == 0 && strlen(receivedText2) > 9)
+        if (hasClockLineRised && topClockBitNumber == 0 && strlen(receivedText) > 9)
         {
             PORTA_OUT |= 1UL << 7;
 
             Event e{
                 EventName::SendData,
-                receivedText2};
+                receivedText};
 
             _statemachine->setState(StateNumber::SENDING);
 
