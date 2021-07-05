@@ -3,9 +3,16 @@ import io
 import json
 import requests
 import time
+import serial.tools.list_ports
+
+comports = list(serial.tools.list_ports.comports())
+comport = comports[0].name
+  
+comport =  "COM5"
+
 
 # if driver doesn't connect https://forum.arduino.cc/t/nanov3-0-rfnano-error/621978
-gateway = serial.Serial("COM4", 9600, timeout=0.1)
+gateway = serial.Serial(comport, 9600, timeout=0.1)
 
 
 with open('data.json') as f:
