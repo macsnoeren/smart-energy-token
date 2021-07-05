@@ -49,22 +49,22 @@
     {
       "technologyGroup": "Solar panel",
       "type": "TFPV",
-      "serial_numbers": ["MEI4NE8ylhQSLiw","MEI4NE8ydg8qBSw"]
+      "serial_numbers": ["MEI4NE8ylhQSLiw","MEI4NE8ydg8qBSw","MEI4NE8y1gILLiw"]
     },
     {
       "technologyGroup": "Solar panel",
       "type": "M_SI",
-      "serial_numbers": ["MEI4NE8ydrsrDSw","MEI4NE8yFicZMiw"]
+      "serial_numbers": ["MEI4NE8ydrsrDSw","MEI4NE8yFicZMiw","MEI4NE8y9lBQMSw"]
     },
     {
       "technologyGroup" :"Solar panel",
       "type" : "P_SI",
-      "serial_numbers" : ["MEI4NE8y1gILLiw"]
+      "serial_numbers" : ["MEI4NE8y1gILLiw","MEI4NE8ytmUpBSw"]
     },
     {
       "technologyGroup": "Battery",
       "type": "BAT1",
-      "serial_numbers": ["MEI4NE8yVjUaYyw"]
+      "serial_numbers": ["MEI4NE8yVjUaYyw","MEI4NE8yVpkrRiw"]
     }
   ]
 }

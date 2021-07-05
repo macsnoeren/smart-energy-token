@@ -102,11 +102,11 @@ void Statemachine::on_execute()
     //not needed code for reseting the RF sender (if the building doenst send umcomment (last resort))
     if (isBase)
     {
-        // SPI.end();
-        // const byte address[6] = "test1";
-        // _radio->begin(); //check if radio is connected
-        // _radio->openWritingPipe(address);
-        // _radio->stopListening();
+        SPI.end();
+        const byte address[6] = "test1";
+        _radio->begin(); //check if radio is connected
+        _radio->openWritingPipe(address);
+        _radio->stopListening();
     }
 }
 

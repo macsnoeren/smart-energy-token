@@ -85,7 +85,7 @@ void SendingState::on_execute()
             {
                 doneWriting = _radio->write(ptr, strlen(ptr));
                 loop++;
-                if (loop >= 5)
+                if (loop > 5)
                 {
                     doneWriting = true;
                 }
